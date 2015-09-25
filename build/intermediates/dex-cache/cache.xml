@@ -2,74 +2,81 @@
 <items version="2" >
 
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/libs/internal_impl-21.0.2.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="9346da9fb778af9e451211bbc3541daced174ba7">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-cb4fb82df91ed9a22515383b11db9e4d5ed4ae58.jar" />
-    </item>
-    <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/libs/internal_impl-23.0.0.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/libs/internal_impl-23.0.0.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/internal_impl-23.0.0-4dd54367b8119d90d65f188aa06ab2d975a3b350.jar" />
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/internal_impl-23.0.0-219de7fccd8ef34b7f0b331da1fdadaaf3d85419.jar" />
     </item>
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/jars/classes.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-b7df1f9b3ba6f03c2894d6973770a42030062bec.jar" />
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-01c959608fb355af52c22076b4fb3b03db395ef3.jar" />
     </item>
     <item
-        jar="/Users/staccie/Development/android-sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/support-annotations-23.0.0-8be9b735f1c12c4fe1c935410d8dd9658c8b0522.jar" />
+        sha1="61965ae058916e6a57950dd61b0164dc866af19a">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-99041d26c89437d3006fec623558a4f04d89e0eb.jar" />
+    </item>
+    <item
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.2/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="b017100da14f9c158c9f5f2f508333c224b24a7c">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-bae28190e6bc26f471ce3027f452ce997062a0c8.jar" />
+    </item>
+    <item
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/libs/internal_impl-21.0.2.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="9346da9fb778af9e451211bbc3541daced174ba7">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/internal_impl-21.0.2-faa5d6b1621c5fd3cb72e521d8f9eb9fc092acc4.jar" />
     </item>
     <item
         jar="/Users/staccie/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-android/1.2.0/6ee2953ccf51ce72b6d548c30c4633b99eb4f9dd/bolts-android-1.2.0.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="6ee2953ccf51ce72b6d548c30c4633b99eb4f9dd">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/bolts-android-1.2.0-e9fea390523baca828c22d567ab86ddb7209ac85.jar" />
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/bolts-android-1.2.0-e9fea390523baca828c22d567ab86ddb7209ac85.jar" />
     </item>
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.2/jars/classes.jar"
+        jar="/Users/staccie/Development/android-sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="61965ae058916e6a57950dd61b0164dc866af19a">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-20390637c4ea3dcee3d736e214946c71cddea088.jar" />
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/support-annotations-23.0.0-8be9b735f1c12c4fe1c935410d8dd9658c8b0522.jar" />
     </item>
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.1.0/jars/classes.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.1.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="a78bfd2ec508b123ee7c03f4006ba7996ef9a8dc">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-4adb02a776f180f447922c0d07bd016884397e48.jar" />
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-1fb972fcc2aa9ac2570f2274cbe2bcf8d01f48a0.jar" />
     </item>
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/21.0.2/jars/classes.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/lib/gson-2.3.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ecb6e1f8e4b0e84c4b886c2f14a1500caf309757">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/gson-2.3.1-d79c0841e4f064d9fa7391b557bd95fd4e76cbe1.jar" />
+    </item>
+    <item
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/21.0.2/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="4796f18d3750bf2bfa078407a94a7f9db35b440d">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-8252f7efd989f138adaddc8e979e19e305ab676a.jar" />
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-5e6489bba95803f35c5f2102df58c9786cf1308d.jar" />
     </item>
     <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/classes.jar"
+        jar="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-fa9925e529a773f36d0699ab7d98734b7a3f21a0.jar" />
-    </item>
-    <item
-        jar="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.2/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="b017100da14f9c158c9f5f2f508333c224b24a7c">
-        <dex dex="/Users/staccie/AndroidStudioProjects/NavigationDrawer1/Application/build/intermediates/pre-dexed/debug/classes-ffa482958924e5fa5a2403c365e1b9f10386c239.jar" />
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="/Users/staccie/AndroidStudioProjects/BeanThere/Application/build/intermediates/pre-dexed/debug/classes-657c4f5a9a1f278b890114d1b5d7e248ed10f187.jar" />
     </item>
 
 </items>

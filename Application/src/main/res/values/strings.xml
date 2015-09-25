@@ -15,29 +15,28 @@
   limitations under the License.
   -->
 <resources>
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+
+    <string-array name="menu_array">
+        <item>Cafe List</item>
+        <item>Promotion List</item>
+        <item>Logout</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
 
-    <string name="app_name">BeanThereBeta</string>
+    <string name="app_name">Bean There</string>
 
     <string name="facebook_app_id">1449613105343968</string>
     <string name="action_settings">Settings</string>
 
     <!--ACTIVITY TITLES-->
-    <string name="title_activity_cafe_list">CafeListActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_cafe_list">CafeListActivity</string>
+    <string name="title_activity_cafe">Cafe</string>
+    <string name="title_activity_promotion_list">Promotion List</string>
 
     <!-- LANDING PAGE -->
     <string name="btn_login">Login</string>
@@ -53,4 +52,26 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="dob">Date of Birth</string>
     <string name="btn_register">Sign up</string>
+
+     <!-- CAFE PAGE -->
+    <string name="btn_about">ABOUT</string>
+    <string name="btn_menu">MENU</string>
+    <string name="tv_title_about">ABOUT</string>
+    <string name="tv_title_operate_hours">Operating Hours</string>
+    <string name="tv_title_contact">Contact Number</string>
+    <string name="tv_title_address">Address</string>
+
+    <!-- DIALOG BUTTONS -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+
+    <!--DIALOG MESSAGE-->
+    <string name="error_fill_in_all">Please fill in all fields</string>
+    <string name="login_failed">Login failed</string>
+    <string name="invalid_server_response">Invalid server response</string>
+    <string name="enable_gps_title">Enable Location Service</string>
+    <string name="enable_gps_message">Enable Location Service to help us find the nearest cafe for you?</string>
+
+
 </resources>

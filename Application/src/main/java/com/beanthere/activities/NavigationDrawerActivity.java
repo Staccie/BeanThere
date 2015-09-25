@@ -17,59 +17,38 @@
 package com.beanthere.activities;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.beanthere.R;
 import com.beanthere.adapter.MenuAdapter;
-import com.beanthere.navigationdrawer.R;
+import com.beanthere.dialoghelper.ConfirmationDialog;
+import com.beanthere.dialoghelper.NoticeDialogFragment;
+import com.beanthere.utils.BeanLocationListener;
 
-import java.util.Locale;
 
-/**
- * This example illustrates a common usage of the DrawerLayout widget
- * in the Android support library.
- * <p/>
- * <p>When a navigation (left) drawer is present, the host activity should detect presses of
- * the action bar's Up affordance as a signal to open and close the navigation drawer. The
- * ActionBarDrawerToggle facilitates this behavior.
- * Items within the drawer should fall into one of two categories:</p>
- * <p/>
- * <ul>
- * <li><strong>View switches</strong>. A view switch follows the same basic policies as
- * list or tab navigation in that a view switch does not create navigation history.
- * This pattern should only be used at the root activity of a task, leaving some form
- * of Up navigation active for activities further down the navigation hierarchy.</li>
- * <li><strong>Selective Up</strong>. The drawer allows the user to choose an alternate
- * parent for Up navigation. This allows a user to jump across an app's navigation
- * hierarchy at will. The application should treat this as it treats Up navigation from
- * a different task, replacing the current task stack using TaskStackBuilder or similar.
- * This is the only form of navigation drawer that should be used outside of the root
- * activity of a task.</li>
- * </ul>
- * <p/>
- * <p>Right side drawers should be used for actions, not navigation. This follows the pattern
- * established by the Action Bar that navigation should be to the left and actions to the right.
- * An action should be an operation performed on the current contents of the window,
- * for example enabling or disabling a data overlay on top of the current content.</p>
- */
-public class NavigationDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener {
+public class NavigationDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener, LocationListener, BeanLocationListener.LocationReceiver {
+
+    private static LocationManager mCoreLocationManager;
+    private static Location mCoreLocation;
+
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -78,13 +57,18 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
     private CharSequence mTitle;
     private String[] mPlanetTitles;
 
+    private LocationManager mLocationManager;
+    private BeanLocationListener mLocationListener;
+    protected Double mLatitude;
+    protected Double mLongitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
 
         mTitle = mDrawerTitle = getTitle();
-        mPlanetTitles = getResources().getStringArray(R.array.planets_array);
+        mPlanetTitles = getResources().getStringArray(R.array.menu_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 
@@ -126,7 +110,7 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         if (savedInstanceState == null) {
-            selectItem(0);
+//            selectItem(0);
         }
     }
 
@@ -143,7 +127,7 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+//        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -179,13 +163,22 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
     }
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        Fragment fragment = PlanetFragment.newInstance(position);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
-        ft.commit();
+        switch (position) {
+
+            case 0:
+                startActivity(new Intent(this, CafeListActivity.class));
+                finish();
+                break;
+            case 1:
+                startActivity(new Intent(this, CafeListActivity.class));
+                break;
+            case 2:
+                startActivity(new Intent(this, PromotionListActivity.class));
+                break;
+            default: break;
+
+        }
 
         // update selected item title, then close the drawer
         setTitle(mPlanetTitles[position]);
@@ -195,7 +188,7 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        getActionBar().setTitle(mTitle);
+//        getActionBar().setTitle(mTitle);
     }
 
     /**
@@ -217,38 +210,110 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    /**
-     * Fragment that appears in the "content_frame", shows a planet
-     */
-    public static class PlanetFragment extends Fragment {
-        public static final String ARG_PLANET_NUMBER = "planet_number";
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startShortLocationListener();
+    }
 
-        public PlanetFragment() {
-            // Empty constructor required for fragment subclasses
+    @Override
+    protected void onDestroy() {
+        removeLocationListener();
+        super.onDestroy();
+    }
+
+    protected boolean checkLocationService() {
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean isEnabled =  locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (!isEnabled) {
+            promptEnableGPS();
         }
+        return false;
+    }
 
-        public static Fragment newInstance(int position) {
-            Fragment fragment = new PlanetFragment();
-            Bundle args = new Bundle();
-            args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-            fragment.setArguments(args);
-            return fragment;
+    protected void getLocation(String tag, Long fieldId) {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = mLocationManager.getBestProvider(new Criteria(), true);
+        if (provider != null) {
+            mLocationListener = new BeanLocationListener(this, tag, fieldId);
+            mLocationManager.requestSingleUpdate(provider, mLocationListener, null);
         }
+    }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_planet, container, false);
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-            String planet = getResources().getStringArray(R.array.planets_array)[i];
+    protected void showNoticeDialog(String title, String message, String neutralButton) {
+        FragmentManager fm = getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
+        noticeDialog.show(fm, "noticeDialog");
+    }
 
-            int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
-                    "drawable", getActivity().getPackageName());
-            ImageView iv = ((ImageView) rootView.findViewById(R.id.image));
-            iv.setImageResource(imageId);
+    private void promptEnableGPS() {
+        FragmentManager fm = getFragmentManager();
+        ConfirmationDialog confirmationDialog = ConfirmationDialog.newInstance(getString(R.string.enable_gps_title), getString(R.string.enable_gps_message));
+        confirmationDialog.show(fm, "getGeoLocation");
+    }
 
-            getActivity().setTitle(planet);
-            return rootView;
-        }
+    protected void startLongLocationListener() {
+        startLocationListener(5 * 60 * 1000);
+    }
+
+    protected void startShortLocationListener() {
+        startLocationListener(3000);
+    }
+
+    private void startLocationListener(long interval) {
+        mCoreLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //		String provider = mCoreLocationManager.getBestProvider(new Criteria(), true);
+
+        removeLocationListener();
+
+        // always listen to two providers
+        mCoreLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 1, this);
+        mCoreLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 1, this);
+    }
+
+    protected void removeLocationListener() {
+        mCoreLocationManager.removeUpdates(this);
+    }
+
+    protected Location getCoreLocation() {
+        return mCoreLocation;
+    }
+
+    protected void clearLocation() {
+        mCoreLocation = null;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCoreLocation = location;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onLocationReceive(String tag, Long fieldId, Location location) {
+//        String geolocation = "(" + location.getLatitude() + ", " + location.getLongitude() + ")";
+
+        // remove update else will consume battery
+//        mLocationManager.removeUpdates(mLocationListener);
+
+        mLatitude = location.getLatitude();
+        mLongitude = location.getLongitude();
+
     }
 }

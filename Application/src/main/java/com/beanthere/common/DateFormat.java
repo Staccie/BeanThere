@@ -1,5 +1,7 @@
 package com.beanthere.common;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

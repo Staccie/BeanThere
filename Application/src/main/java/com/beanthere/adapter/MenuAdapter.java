@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.beanthere.navigationdrawer.R;
+import com.beanthere.R;
 
 /**
  * Adapter for the planet data used in our drawer menu,
