@@ -44,7 +44,7 @@ import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.listeners.BeanLocationListener;
 
 
-public class NavigationDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener, LocationListener, BeanLocationListener.LocationReceiver {
+public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener, LocationListener, BeanLocationListener.LocationReceiver {
 
     private static LocationManager mCoreLocationManager;
     private static Location mCoreLocation;
@@ -171,10 +171,10 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
                 finish();
                 break;
             case 1:
-                startActivity(new Intent(this, MapActivity.class));
+                startActivity(new Intent(this, PromoListActivity.class));
                 break;
             case 2:
-                startActivity(new Intent(this, VoucherListActivity.class));
+                logout();
                 break;
             default: break;
 
@@ -183,6 +183,9 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
         // update selected item title, then close the drawer
         setTitle(mPlanetTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    private void logout() {
     }
 
     @Override
