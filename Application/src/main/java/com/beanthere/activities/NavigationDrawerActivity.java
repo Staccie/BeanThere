@@ -41,7 +41,7 @@ import com.beanthere.R;
 import com.beanthere.adapter.MenuAdapter;
 import com.beanthere.dialoghelper.ConfirmationDialog;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
-import com.beanthere.utils.BeanLocationListener;
+import com.beanthere.listeners.BeanLocationListener;
 
 
 public class NavigationDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener, LocationListener, BeanLocationListener.LocationReceiver {
@@ -171,10 +171,10 @@ public class NavigationDrawerActivity extends Activity implements MenuAdapter.On
                 finish();
                 break;
             case 1:
-                startActivity(new Intent(this, CafeListActivity.class));
+                startActivity(new Intent(this, MapActivity.class));
                 break;
             case 2:
-                startActivity(new Intent(this, PromotionListActivity.class));
+                startActivity(new Intent(this, VoucherListActivity.class));
                 break;
             default: break;
 

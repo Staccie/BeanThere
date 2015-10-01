@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.beanthere.R;
-import com.beanthere.common.FormValidator;
+import com.beanthere.utils.Validator;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.objects.User;
 import com.beanthere.webservice.Request;
@@ -35,7 +35,7 @@ public class LoginActivity extends Activity {
         String email = ((TextView) findViewById(R.id.editTextLoginEmail)).getText().toString().trim();
         String password = ((TextView) findViewById(R.id.editTextLoginPassword)).getText().toString().trim();
 
-        if (FormValidator.isComplete(email, password)) {
+        if (Validator.isComplete(email, password)) {
             new Login().execute(email, password);
         } else {
             FragmentManager fm = getFragmentManager();
@@ -49,7 +49,7 @@ public class LoginActivity extends Activity {
         String email = ((TextView) findViewById(R.id.editTextLoginEmail)).getText().toString().trim();
         String password = ((TextView) findViewById(R.id.editTextLoginPassword)).getText().toString().trim();
 
-        if (FormValidator.isComplete(email)) {
+        if (Validator.isComplete(email)) {
             new ForgotPassword().execute(email);
         }
     }
@@ -75,8 +75,9 @@ public class LoginActivity extends Activity {
 //                    SharedPreferencesManager.putString(LoginActivity.this, SharedPreferencesManager.AOM_P, params[1]);
 //                    SharedPreferencesManager.putString(LoginActivity.this, SharedPreferencesManager.AOM_C, params[2]);
 
-
-        startActivity(new Intent(this, CafeListActivity.class));
+        Intent intent = new Intent(this, CafeListActivity.class);
+        intent.putExtra("reqLocationService", true);
+        startActivity(intent);
         finish();
     }
 

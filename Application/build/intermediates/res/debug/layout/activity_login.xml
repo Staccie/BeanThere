@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:layout_gravity="center"
-    tools:context="com.beantherebeta.activities.LoginActivity">
+    tools:context="com.beanthere.activities.LoginActivity">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:id="@+id/editText"
+            android:id="@+id/editTextLoginEmail"
             android:layout_weight="1" />
     </LinearLayout>
 
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:id="@+id/editText2"
+            android:id="@+id/editTextLoginPassword"
             android:layout_weight="1" />
 
     </LinearLayout>

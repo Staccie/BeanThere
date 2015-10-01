@@ -1,5 +1,7 @@
 package com.beanthere.objects;
 
+import android.app.Application;
+
 /**
  * Created by staccie on 9/13/15.
  */

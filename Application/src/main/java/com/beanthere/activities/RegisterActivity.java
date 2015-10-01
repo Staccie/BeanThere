@@ -1,6 +1,5 @@
 package com.beanthere.activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,8 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.beanthere.R;
-import com.beanthere.common.FormValidator;
-import com.beanthere.dialoghelper.BeanDialogInterace;
+import com.beanthere.utils.Validator;
+import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DatePickerFragment;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.OnDataSetListener;
@@ -23,7 +22,7 @@ import org.json.JSONObject;
 /**
  * Created by staccie on 9/14/15.
  */
-public class RegisterActivity extends BaseActivity implements OnDataSetListener, BeanDialogInterace.OnPositiveClickListener {
+public class RegisterActivity extends BaseActivity implements OnDataSetListener, BeanDialogInterface.OnPositiveClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +55,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         // TODO add TextWatcher or onchange listener for password fields
         // TODO do one-by-one checking
 
-        if (FormValidator.isComplete(email, firstName, lastName, password, confirmPassword, dob)) {
+        if (Validator.isComplete(email, firstName, lastName, password, confirmPassword, dob)) {
             showNoticeDialog("Error", "Please fill in all fields.", null);
         } else if (firstName != lastName) {
             showNoticeDialog("Error", "Password not match.", null);

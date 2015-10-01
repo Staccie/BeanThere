@@ -22,6 +22,16 @@
         <item>Logout</item>
     </string-array>
 
+    <string-array name="day_array">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
@@ -72,6 +82,9 @@
     <string name="invalid_server_response">Invalid server response</string>
     <string name="enable_gps_title">Enable Location Service</string>
     <string name="enable_gps_message">Enable Location Service to help us find the nearest cafe for you?</string>
+
+    <!--GENERAL-->
+    <string name="no_info">No info</string>
 
 
 </resources>

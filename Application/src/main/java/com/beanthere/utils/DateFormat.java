@@ -1,6 +1,4 @@
-package com.beanthere.common;
-
-import android.util.Log;
+package com.beanthere.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
