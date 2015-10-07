@@ -25,6 +25,9 @@ public class User {
     @SerializedName("last_name")
     public String last_name;
 
+    @SerializedName("dob")
+    public String dob;
+
     @SerializedName("fb_user_id")
     public String fb_user_id;
 

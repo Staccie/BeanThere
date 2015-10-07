@@ -40,7 +40,15 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         Calendar c = Calendar.getInstance();
 
         if (!(defaultDate == null || defaultDate.isEmpty())) {
-            SimpleDateFormat sdf_parse = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+            SimpleDateFormat sdf_parse;
+
+            if (defaultDate.length() == 19) {
+                sdf_parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            } else {
+                sdf_parse = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            }
+
             Date date;
             try {
                 date = sdf_parse.parse(defaultDate);

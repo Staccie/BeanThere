@@ -74,9 +74,9 @@ public class SharedPreferencesManager {
 		return sp.getLong(key, -1);
 	}
 
-//	public static String getAOMU(Context context) {
-//		return getString(context, AOM_U);
-//	}
+	public static String getAPIKey(Context context) {
+		return getString(context, "apikey");
+	}
 //
 //	public static String getAOMC(Context context) {
 //		return getString(context, AOM_C);

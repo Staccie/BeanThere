@@ -72,18 +72,9 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
             }
         });
 
-        Bundle extras = getIntent().getExtras();
+        checkLocationService();
 
-        if(extras != null) {
-            if (extras.getBoolean("reqLocationService", false)) {
-                checkLocationService();
-            }
-        }
-
-        String apikey = SharedPreferencesManager.getString(this, "apikey");
-
-
-        new LoadCafeList().execute(apikey);
+        new LoadCafeList().execute(SharedPreferencesManager.getAPIKey(this));
 
 //        mWebServiceCallback = new WebServiceLoaderCallback();
 //        mDBCallback = new DBLoaderCallback();
@@ -120,7 +111,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
             super.onPostExecute(response);
 
             if (response == null && response.isEmpty()) {
-                showNoticeDialog(getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
+                showNoticeDialog("", getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
             } else {
 
                 Gson gson = new Gson();
@@ -129,7 +120,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
                 genResponse = gson.fromJson(response, GeneralResponse.class);
 
                 if (genResponse.error) {
-                    showNoticeDialog(getString(R.string.login_failed), genResponse.error_message, "");
+                    showNoticeDialog("", getString(R.string.login_failed), genResponse.error_message, "");
                 } else {
                     updateCafeList(genResponse.cafeList);
                 }

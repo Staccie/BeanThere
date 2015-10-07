@@ -40,16 +40,20 @@ import android.widget.Toast;
 
 import com.beanthere.R;
 import com.beanthere.adapter.MenuAdapter;
+import com.beanthere.data.SharedPreferencesManager;
+import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.BeanDialogInterface.OnInputDialogDismissListener;
 import com.beanthere.dialoghelper.ConfirmationDialog;
 import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
+import com.beanthere.objects.GeneralResponse;
 import com.beanthere.webservice.HttpHandler;
+import com.google.gson.Gson;
 
 
 public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnItemClickListener,
         LocationListener, BeanLocationListener.LocationReceiver,
-        OnInputDialogDismissListener {
+        OnInputDialogDismissListener, BeanDialogInterface.OnPositiveClickListener {
 
     private static LocationManager mCoreLocationManager;
     private static Location mCoreLocation;
@@ -173,11 +177,9 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
 
             case 0:
                 startActivity(new Intent(this, CafeListActivity.class));
-                finish();
                 break;
             case 1:
                 startActivity(new Intent(this, CafeFilterActivity.class));
-                finish();
                 break;
             case 2:
                 showPromoDialog("getpromo", "0");
@@ -185,11 +187,9 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
                 break;
             case 3:
                 startActivity(new Intent(this, VoucherListActivity.class));
-                finish();
                 break;
             case 4:
                 startActivity(new Intent(this, ProfileActivity.class));
-                finish();
                 break;
             case 5:
                 logout();
@@ -209,7 +209,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
         inputDialog.show(fm, tag);
     }
 
-    private void logout() {
+    protected void logout() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -249,18 +249,25 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
 
     @Override
     protected void onDestroy() {
+        // TODO prompt confirm dialog upon exiting
         removeLocationListener();
         super.onDestroy();
     }
 
     protected boolean checkLocationService() {
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        boolean isEnabled =  locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (SharedPreferencesManager.getBoolean(this, "checkLocation")) {
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            boolean isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-        if (!isEnabled) {
-            promptEnableGPS();
+
+            if (!isEnabled) {
+                promptEnableGPS();
+            }
+
+            SharedPreferencesManager.putBoolean(this, "checkLocation", false);
         }
+
         return false;
     }
 
@@ -310,6 +317,13 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
         mCoreLocation = null;
     }
 
+    @Override
+    public void onPositiveClick(String tag, int which) {
+        if (tag.equals("gotovoucherlist")) {
+            startActivity(new Intent(this, VoucherListActivity.class));
+        }
+    }
+
     class GetPromoTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -329,19 +343,17 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
             super.onPostExecute(response);
 
             if (response == null && response.isEmpty()) {
-                showNoticeDialog(getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 
-//                Gson gson = new Gson();
-//                GeneralResponse genResponse;
-//
-//                genResponse = gson.fromJson(response, GeneralResponse.class);
-//
-//                if (genResponse.error) {
-//                    showNoticeDialog(getString(R.string.login_failed), genResponse.error_message, "");
-//                } else {
-//               // TODO show dialog to redirect to promo list
-//                }
+                Gson gson = new Gson();
+                GeneralResponse res = gson.fromJson(response, GeneralResponse.class);
+
+                if (res.error) {
+                    showNoticeDialog("", getString(R.string.error_title), res.error_message, "");
+                } else {
+                    showNoticeDialog("gotovoucherlist", "", res.error_message, "");
+                }
             }
         }
     }

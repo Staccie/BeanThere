@@ -2,6 +2,7 @@ package com.beanthere.activities;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -25,10 +26,22 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
     }
 
-    protected void showNoticeDialog(String title, String message, String neutralButton) {
+    protected void showNoticeDialog(String tag, String title, String message, String neutralButton) {
         FragmentManager fm = getFragmentManager();
         NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
-        noticeDialog.show(fm, "noticeDialog");
+        noticeDialog.show(fm, tag);
+    }
+
+    // TODO use this instead
+    protected void showNoticeDialog(Activity activity, String tag, String title, String message, String neutralButton) {
+        FragmentManager fm = activity.getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
+        noticeDialog.show(fm, tag);
+    }
+
+    // TODO remove all redundant and use this
+    protected void showInvalidResponseDialog(Activity activity) {
+        showNoticeDialog(activity, "", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
     }
 
 }

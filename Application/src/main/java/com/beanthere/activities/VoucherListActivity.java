@@ -47,11 +47,9 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
 
         mAdapter = new VoucherListAdapter(this, mList);
         mListView = (ListView) view.findViewById(R.id.listViewPromotion);
-        mListView.setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);;
 
-        String apikey = SharedPreferencesManager.getString(this, "apikey");
-
-        new LoadVoucherList().execute(apikey);
+        new LoadVoucherList().execute(SharedPreferencesManager.getAPIKey(this));
 
 //        mWebServiceCallback = new WebServiceLoaderCallback();
 //        mDBCallback = new DBLoaderCallback();
@@ -78,7 +76,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
             super.onPostExecute(response);
 
             if (response == null || response.isEmpty()) {
-                showNoticeDialog(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 
                 Gson gson = new Gson();
@@ -88,7 +86,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
                 genResponse = gson.fromJson(response, GeneralResponse.class);
 
                 if (genResponse.error) {
-                    showNoticeDialog(getString(R.string.error_title), genResponse.error_message, "");
+                    showNoticeDialog("", getString(R.string.error_title), genResponse.error_message, "");
                 } else {
                     updateVoucherList(genResponse.voucherList);
                 }
@@ -131,19 +129,17 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
             super.onPostExecute(response);
 
             if (response == null && response.isEmpty()) {
-                showNoticeDialog(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
-
                 Gson gson = new Gson();
                 GeneralResponse genResponse;
 
                 genResponse = gson.fromJson(response, GeneralResponse.class);
 
                 if (genResponse.error) {
-                    showNoticeDialog(getString(R.string.error_title), genResponse.error_message, "");
+                    showNoticeDialog("", getString(R.string.error_title), genResponse.error_message, "");
                 } else {
-                    // TODO show dialog to refresh list
-                    showNoticeDialog(getString(R.string.error_title), genResponse.error_message, "");
+                    showNoticeDialog("refreshPromoList", "", genResponse.error_message, "");
                 }
             }
         }
@@ -170,8 +166,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
     @Override
     public void onPositiveClick(String tag, int which) {
         if (tag.equals("refreshPromoList")) {
-            String apikey = SharedPreferencesManager.getString(this, "apikey");
-            new LoadVoucherList().execute(apikey);
+            new LoadVoucherList().execute(SharedPreferencesManager.getAPIKey(this));
         }
     }
 

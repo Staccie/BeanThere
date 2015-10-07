@@ -1,6 +1,7 @@
 package com.beanthere.activities;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by staccie on 9/14/15.
+ * Created by staccie
  */
 public class RegisterActivity extends BaseActivity implements OnDataSetListener, BeanDialogInterface.OnPositiveClickListener {
 
@@ -53,15 +54,15 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         String dob = ((TextView) findViewById(R.id.dob)).getText().toString().trim();
 
         // TODO add TextWatcher or onchange listener for password fields
-        // TODO do one-by-one checking
+        // TODO do one-by-one checking show tooltip if not match
 
-        if (Validator.isComplete(email, firstName, lastName, password, confirmPassword, dob)) {
-            showNoticeDialog("Error", "Please fill in all fields.", null);
-        } else if (firstName != lastName) {
-            showNoticeDialog("Error", "Password not match.", null);
+        if (!Validator.isComplete(email, firstName, lastName, password, confirmPassword, dob)) {
+            showNoticeDialog("", getString(R.string.error_title), getString(R.string.error_fill_in_all), null);
+        } else if (!firstName.equals(lastName)) {
+            showNoticeDialog("", getString(R.string.error_title), "Password not match.", null);
+        } else {
+            new Register().execute(email, password, firstName, lastName, dob);
         }
-
-        new Register().execute(email, password, firstName, lastName, dob);
     }
 
     public void onclickDOBDate(View view) {
@@ -92,7 +93,8 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
 
     @Override
     public void onPositiveClick(String tag, int which) {
-        if (which == NoticeDialogFragment.REGISTER_SUCCESS) {
+        if (tag.equals("successlogin")) {
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }
@@ -131,13 +133,13 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
             super.onPostExecute(response);
 
             if (response == null && response.isEmpty()) {
-                showNoticeDialog("Error", "Invalid response", null);
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
             } else {
 
-                JSONObject obj = null;
+                JSONObject obj;
                 boolean error = true;
                 String message = "";
-//
+
                 try {
                     obj = new JSONObject(response);
 
@@ -146,13 +148,13 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    showNoticeDialog("Error", "Invalid response", null);
+                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
                 }
 
                 if (error) {
-                    showNoticeDialog("Error", message, null);
+                    showNoticeDialog("", getString(R.string.error_title), message, null);
                 } else {
-                    showNoticeDialog("Success", "Account successfully created. Please login.", null);
+                    showNoticeDialog("successlogin", "Success", "Account successfully created. Please login to continue.", null);
                 }
             }
         }

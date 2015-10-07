@@ -33,7 +33,7 @@ public class HttpHandler {
 //        map.put("fb_user_id", fb_user_id);
 //        map.put("fb_auth_token", fb_auth_token);
         Log.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob);
-        return httpPost(map, "register");
+        return httpPost(map, "register", "");
     }
 
     public String login(String email, String password, int type) {
@@ -44,7 +44,7 @@ public class HttpHandler {
         map.put("password", password);
         map.put("logintype", type);
 
-        return httpPost(map, "login");
+        return httpPost(map, "login", "");
     }
 
     public String forgotpassword(String email) {
@@ -52,7 +52,7 @@ public class HttpHandler {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("email", email);
 
-        return httpPost(map, "forgotpassword");
+        return httpPost(map, "forgotpassword", "");
     }
 
     public String getMerchantList(String apikey, Double latitude, Double longitude) {
@@ -89,7 +89,23 @@ public class HttpHandler {
         map.put("tx_vouchers_id", voucherId);
         map.put("pin", code);
 
-        return httpPost(map, "vouchers/redeem");
+        return httpPost(map, "vouchers/redeem", "");
+    }
+
+    public String updateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        map.put("first_name", firstName);
+        map.put("last_name", lastName);
+        map.put("dob", dob);
+        map.put("fb_user_id", fb_user_id);
+        map.put("fb_auth_token", fb_auth_token);
+        map.put("_METHOD", "PUT");
+//        Log.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob);
+        // TODO get user id in Login API and send over?
+        return httpPost(map, "user/111", "");
     }
 
     /*public JSONObject setUpdateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
@@ -126,7 +142,7 @@ public class HttpHandler {
         return json;
     }*/
 
-    private String httpPost(Map<String, Object> map, String action) {
+    private String httpPost(Map<String, Object> map, String action, String apikey) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -150,6 +166,9 @@ public class HttpHandler {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+            if (!apikey.isEmpty()) {
+                conn.setRequestProperty("Authorization", apikey);
+            }
             conn.setDoOutput(true);
             conn.getOutputStream().write(postDataBytes);
 
@@ -224,81 +243,5 @@ public class HttpHandler {
         return response;
 
     }
-
-//    private String httpGet() {
-//        HttpURLConnection connection = null;
-//        OutputStreamWriter wr = null;
-//        BufferedReader rd  = null;
-//        StringBuilder sb = null;
-//        String line = null;
-//
-//        URL serverAddress = null;
-//
-//        try {
-//            serverAddress = new URL("http://localhost");
-//            //set up out communications stuff
-//            connection = null;
-//
-//            //Set up the initial connection
-//            connection = (HttpURLConnection)serverAddress.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setDoOutput(true);
-//            connection.setReadTimeout(10000);
-//
-//            connection.connect();
-//
-//            //get the output stream writer and write the output to the server
-//            //not needed in this example
-//            //wr = new OutputStreamWriter(connection.getOutputStream());
-//            //wr.write("");
-//            //wr.flush();
-//
-//            //read the result from the server
-//            rd  = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-//            sb = new StringBuilder();
-//
-//            while ((line = rd.readLine()) != null)
-//            {
-//                sb.append(line + '\n');
-//            }
-//
-//            System.out.println(sb.toString());
-//
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (ProtocolException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        finally
-//        {
-//            //close the connection, set all objects to null
-//            connection.disconnect();
-//            rd = null;
-//            sb = null;
-//            wr = null;
-//            connection = null;
-//        }
-//    }
-
-
-//    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-//
-//        StringBuilder result = new StringBuilder();
-//        boolean first = true;
-//        for(Map.Entry<String, String> entry : params.entrySet()){
-//            if (first)
-//                first = false;
-//            else
-//                result.append("&");
-//
-//            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-//            result.append("=");
-//            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-//        }
-//
-//        return result.toString();
-//    }
 
 }

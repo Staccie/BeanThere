@@ -27,6 +27,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_new);
 
+        // TODO Remove test data
         ((TextView) findViewById(R.id.editTextLoginEmail)).setText("ice@gmail.com");
         ((TextView) findViewById(R.id.editTextLoginPassword)).setText("123456");
     }
@@ -47,7 +48,6 @@ public class LoginActivity extends Activity {
     public void onClickForgotPassword(View view) {
 
         String email = ((TextView) findViewById(R.id.editTextLoginEmail)).getText().toString().trim();
-        String password = ((TextView) findViewById(R.id.editTextLoginPassword)).getText().toString().trim();
 
         if (Validator.isComplete(email)) {
             new ForgotPassword().execute(email);
@@ -56,27 +56,25 @@ public class LoginActivity extends Activity {
 
     private void processLogin(User user) {
 
-
         SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("apikey", user.api_key);
         editor.putString("email", user.email);
+        editor.putString("first_name", user.first_name);
+        editor.putString("last_name", user.last_name);
+        editor.putString("dob", user.dob);
+        editor.putString("fb_user_id", user.fb_user_id);
+        editor.putString("fb_auth_token", user.fb_auth_token);
         editor.putInt("logintype", 1);
+        editor.putBoolean("checkLocation", true);
+
+        // TODO encrypt
+        String p = ((TextView) findViewById(R.id.editTextLoginPassword)).getText().toString().trim();
+        editor.putString("p", p);
+
         editor.commit();
 
-        // wipe data if different user login
-//                    if (!SharedPreferencesManager.getAOMU(LoginActivity.this).equals(params[0])
-//                            || !SharedPreferencesManager.getAOMC(LoginActivity.this).equals(params[2])) {
-//                        wipeData();
-//                    }
-//
-//                    // save login credentials
-//                    SharedPreferencesManager.putString(LoginActivity.this, SharedPreferencesManager.AOM_U, params[0]);
-//                    SharedPreferencesManager.putString(LoginActivity.this, SharedPreferencesManager.AOM_P, params[1]);
-//                    SharedPreferencesManager.putString(LoginActivity.this, SharedPreferencesManager.AOM_C, params[2]);
-
         Intent intent = new Intent(this, CafeListActivity.class);
-        intent.putExtra("reqLocationService", true);
         startActivity(intent);
         finish();
     }
@@ -117,32 +115,6 @@ public class LoginActivity extends Activity {
             if (response == null && response.isEmpty()) {
                 // TODO handleRequestFail
             } else {
-
-//                JSONObject obj = null;
-//                boolean error = true;
-//                String message = "";
-////
-//                try {
-//                    obj = new JSONObject(response);
-//
-//                    error = obj.optBoolean("error", true);
-//                    message = obj.optString("message", "");
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    // TODO handleDataFail
-//                }
-//
-//                if (error) {
-//                    FragmentManager fm = getFragmentManager();
-//                    NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, "");
-//                    noticeDialog.show(fm, "");
-//                } else {
-//                    processLogin();
-//                }
-
-
-
 
                 Gson gson = new Gson();
                 User user;

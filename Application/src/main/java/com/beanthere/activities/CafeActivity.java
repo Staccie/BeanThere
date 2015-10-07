@@ -71,8 +71,6 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
 
-        String apikey = SharedPreferencesManager.getString(this, "apikey");
-
         if (mCategories == null) {
             mCategories = new ArrayList<String>();
             mCafeMenuList = new HashMap<String, List<CafeMenu>>();
@@ -92,11 +90,11 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
             if (mCafeId.isEmpty()) finish();
 
-            new GetCafeDetailsTask().execute(apikey);
+            new GetCafeDetailsTask().execute(SharedPreferencesManager.getAPIKey(this));
         } else {
             mCafeId = savedInstanceState.getString("mCafeId", "0");
             mCurrentView = savedInstanceState.getInt("cafeId", 0);
-            new GetCafeDetailsTask().execute(apikey);
+            new GetCafeDetailsTask().execute(SharedPreferencesManager.getAPIKey(this));
         }
 
     }
