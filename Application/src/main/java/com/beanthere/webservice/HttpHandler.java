@@ -71,16 +71,12 @@ public class HttpHandler {
         return httpGet("merchants/detail/"+id, apikey);
     }
 
-    public String getPromoList(String apikey) {
-        return httpGet("vouchers", apikey);
-    }
-
     public String getWalletCardList(String apikey) {
         return httpGet("cards/wallet", apikey);
     }
 
     public String getWalletVoucherList(String apiKey) {
-        return httpGet("vouchers/wallet", apiKey);
+        return httpGet("vouchers", apiKey);
     }
 
     public String getVoucher(String promoCode) {

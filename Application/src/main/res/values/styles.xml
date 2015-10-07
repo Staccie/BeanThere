@@ -6,8 +6,17 @@
     </style>
 
     <style name="Hyperlink" parent="android:Widget.TextView">
-        <item name="android:textColor">#0000EE</item>
+        <item name="android:textColorLink">#FFFFFF</item>
         <item name="android:textAppearance">?android:textAppearanceMediumInverse</item>
+    </style>
+
+    <style name="BeanEditText" parent="android:Widget.EditText">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorHint">#FFFFFF</item>
+        <item name="android:textAppearance">?android:textAppearanceMediumInverse</item>
+        <item name="android:layout_weight">1</item>
+
     </style>
 
     <style name="LargeBoldText">

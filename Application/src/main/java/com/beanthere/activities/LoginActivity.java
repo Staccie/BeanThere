@@ -25,7 +25,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_new);
 
         ((TextView) findViewById(R.id.editTextLoginEmail)).setText("ice@gmail.com");
         ((TextView) findViewById(R.id.editTextLoginPassword)).setText("123456");
