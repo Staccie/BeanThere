@@ -13,11 +13,12 @@ import android.widget.TextView;
 import com.beanthere.R;
 import com.beanthere.listeners.BeanAdapterInterface;
 import com.beanthere.objects.Voucher;
+import com.beanthere.utils.ImageViewDownloader;
 
 import java.util.List;
 
 /**
- * Created by staccie on 9/20/15.
+ * Created by staccie on
  */
 public class VoucherListAdapter extends BaseAdapter {
 
@@ -67,16 +68,23 @@ public class VoucherListAdapter extends BaseAdapter {
         Voucher voucher = mList.get(position);
 
         Log.e("view holder " + position, voucher.name);
-        final int voucherId = Integer.valueOf(voucher.voucher_id);
+        final String voucherId = voucher.voucher_id;
         final int pos = position;
 
+        if (voucher.images_1 == null || voucher.images_1.trim().isEmpty()) {
+            holder.ivVoucher.setImageResource(R.drawable.placeholder);
+        } else {
+            new ImageViewDownloader(holder.ivVoucher).execute(voucher.images_1);
+        }
+
         holder.tvName.setText(voucher.name);
-        holder.tvExpiryDate.setText(voucher.expiry);
+        holder.tvExpiryDate.setText(String.format(mContext.getString(R.string.promo_expire), voucher.expiry));
+
         holder.btnRedeem.setTag(position);
         holder.btnRedeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BeanAdapterInterface.OnButtonClickListener) mContext).onButtonClick("voucherDetails", voucherId, pos);
+                ((BeanAdapterInterface.OnButtonClickListener) mContext).onButtonClick("redeemPromo", voucherId, pos);
             }
         });
 

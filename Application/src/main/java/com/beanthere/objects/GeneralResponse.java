@@ -18,4 +18,10 @@ public class GeneralResponse {
     @SerializedName("merchants")
     public List<Cafe> cafeList;
 
+    @SerializedName("vouchers")
+    public List<Voucher> voucherList;
+
+    @SerializedName("cards")
+    public List<Card> cardList;
+
 }

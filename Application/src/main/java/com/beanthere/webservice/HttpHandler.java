@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Created by staccie on 9/13/15.
  */
-public class Request {
+public class HttpHandler {
 
     public String register(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
 
@@ -69,6 +69,31 @@ public class Request {
     public String getMerchantDetails(String id, String apikey) {
         Log.e("getMerchantDetails", "id: " + id + "; apikey: " + apikey);
         return httpGet("merchants/detail/"+id, apikey);
+    }
+
+    public String getPromoList(String apikey) {
+        return httpGet("vouchers", apikey);
+    }
+
+    public String getWalletCardList(String apikey) {
+        return httpGet("cards/wallet", apikey);
+    }
+
+    public String getWalletVoucherList(String apiKey) {
+        return httpGet("vouchers/wallet", apiKey);
+    }
+
+    public String getVoucher(String promoCode) {
+        return "";
+    }
+
+    public String redeemVoucher(String voucherId, String code) {
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("tx_vouchers_id", voucherId);
+        map.put("pin", code);
+
+        return httpPost(map, "vouchers/redeem");
     }
 
     /*public JSONObject setUpdateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
@@ -144,11 +169,11 @@ public class Request {
             Log.e("httpPost", stringBuilder.toString());
 
         } catch (MalformedURLException e) {
-            Log.e("@Request:httpPost", "MalformedURLException: " + e.getMessage());
+            Log.e("@HttpHandler:httpPost", "MalformedURLException: " + e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            Log.e("@Request:httpPost", "UnsupportedEncodingException: " + e.getMessage());
+            Log.e("@HttpHandler:httpPost", "UnsupportedEncodingException: " + e.getMessage());
         } catch (IOException e) {
-            Log.e("@Request:httpPost", "IOException: " + e.getMessage());
+            Log.e("@HttpHandler:httpPost", "IOException: " + e.getMessage());
         }
 
         return stringBuilder.toString();
@@ -156,7 +181,7 @@ public class Request {
 
     private String httpGet(String action, String apikey) {
 
-        StringBuilder stringBuilder = new StringBuilder();
+        String response = null;
 
         try {
             String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
@@ -165,6 +190,8 @@ public class Request {
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+            Log.e("httpGet requestURL", requestURL);
 
             Log.e("httpGet apikey", apikey);
 
@@ -176,16 +203,18 @@ public class Request {
             Log.e("GET Response Code :: ",  String.valueOf(responseCode));
 
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
+                StringBuilder stringBuilder = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
                     stringBuilder.append(inputLine);
                 }
                 in.close();
 
-                Log.e("httpGet", stringBuilder.toString());
+                response = stringBuilder.toString();
+
+                Log.e("httpGet", response);
             }
 
         } catch (MalformedURLException e) {
@@ -196,7 +225,7 @@ public class Request {
             e.printStackTrace();
         }
 
-        return stringBuilder.toString();
+        return response;
 
     }
 

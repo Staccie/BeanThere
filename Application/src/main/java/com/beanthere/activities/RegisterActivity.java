@@ -14,7 +14,7 @@ import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DatePickerFragment;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.OnDataSetListener;
-import com.beanthere.webservice.Request;
+import com.beanthere.webservice.HttpHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +109,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
 
             Log.e("Register", "doInBackground");
 
-            Request req = new Request();
+            HttpHandler req = new HttpHandler();
             String response = req.register(params[0], params[1], params[2], params[3], params[4], "", "");
 
             return response;

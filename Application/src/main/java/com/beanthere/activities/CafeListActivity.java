@@ -33,7 +33,7 @@ import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.objects.Cafe;
 import com.beanthere.objects.GeneralResponse;
-import com.beanthere.webservice.Request;
+import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
             Log.e("Login", "doInBackground");
 
-            Request req = new Request();
+            HttpHandler req = new HttpHandler();
             String response = req.getMerchantList(params[0], mLatitude, mLongitude);
 
             return response;

@@ -6,6 +6,6 @@ package com.beanthere.listeners;
 public interface BeanAdapterInterface {
 
     interface OnButtonClickListener {
-        void onButtonClick(String tag, int id, int position);
+        void onButtonClick(String tag, String id, int position);
     }
 }

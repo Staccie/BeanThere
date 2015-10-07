@@ -11,10 +11,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.beanthere.R;
-import com.beanthere.utils.Validator;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.objects.User;
-import com.beanthere.webservice.Request;
+import com.beanthere.utils.Validator;
+import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -93,7 +93,7 @@ public class LoginActivity extends Activity {
 
             Log.e("Login", "doInBackground");
 
-            Request req = new Request();
+            HttpHandler req = new HttpHandler();
             String response = req.login(params[0], params[1], 1);
 
             return response;
@@ -175,7 +175,7 @@ public class LoginActivity extends Activity {
 
             Log.e("ForgotPassword", "doInBackground");
 
-            Request req = new Request();
+            HttpHandler req = new HttpHandler();
             String response = req.forgotpassword(params[0]);
 
             return response;

@@ -1,21 +1,25 @@
 package com.beanthere.activities;
 
-import android.content.Context;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.adapter.CafeMenuAdapter;
 import com.beanthere.data.SharedPreferencesManager;
-import com.beanthere.objects.Cafe;
-import com.beanthere.objects.GeneralResponse;
 import com.beanthere.listeners.BeanLocationListener;
-import com.beanthere.webservice.Request;
+import com.beanthere.objects.Cafe;
+import com.beanthere.objects.CafeMenu;
+import com.beanthere.objects.Category;
+import com.beanthere.objects.GeneralResponse;
+import com.beanthere.objects.OperatingHour;
+import com.beanthere.utils.ImageViewDownloader;
+import com.beanthere.webservice.HttpHandler;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -24,16 +28,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by staccie on 9/20/15.
- */
-public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallback {
+public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
-    private View mView;
+//    private View mView;
     private MapFragment mMapFragment;
     private GoogleMap mMap;
+    private List<String> mCategories;
+    private HashMap<String, List<CafeMenu>> mCafeMenuList;
+    private ExpandableListView mMenuListView;
+    private CafeMenuAdapter mAdapter;
 
     private LocationManager mLocationManager;
     private BeanLocationListener mLocationListener;
@@ -43,23 +50,33 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
     private String mCafeId;
     private boolean isLoading;
     private int mCurrentView;
-    private String mExtra;
+//    private String mExtra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.e("onCreate", "CafeActivity");
+        setContentView(R.layout.activity_cafe);
 
-        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mView = layoutInflater.inflate(R.layout.activity_cafe, null, false);
-        frameLayout.addView(mView);
+        mAdapter = new CafeMenuAdapter(this, mCategories, mCafeMenuList);
+        mMenuListView = (ExpandableListView) findViewById(R.id.listViewCafeMenu);
+        mMenuListView.setAdapter(mAdapter);
+
+//        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        mView = layoutInflater.inflate(R.layout.activity_cafe, null, false);
+//        frameLayout.addView(mView);
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
 
         String apikey = SharedPreferencesManager.getString(this, "apikey");
+
+        if (mCategories == null) {
+            mCategories = new ArrayList<String>();
+            mCafeMenuList = new HashMap<String, List<CafeMenu>>();
+        }
 
         if (savedInstanceState == null) {
 
@@ -71,9 +88,9 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
             isLoading = false;
             mCafeId = extras.getString("cafeId", "");
 
-            Log.e("saved is null", "cafeid=" + mCafeId + "; isLoading: " + String.valueOf(isLoading) );
+            Log.e("saved is null", "cafeid=" + mCafeId + "; isLoading: " + String.valueOf(isLoading));
 
-            if (mCafeId == "") finish();
+            if (mCafeId.isEmpty()) finish();
 
             new GetCafeDetailsTask().execute(apikey);
         } else {
@@ -112,10 +129,10 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
             Log.e("doinbackground", "mCafeId: " + mCafeId + "; isLoading: " + String.valueOf(isLoading));
             if (mCafeId != "" && !isLoading) {
                 isLoading = true;
-                Request req = new Request();
+                HttpHandler req = new HttpHandler();
                 String response = req.getMerchantDetails(mCafeId, params[0]);
 
-                if (response == null || response == "") {
+                if (response == null || response.isEmpty()) {
                     //  Dialog cannot get cafe detail
                     return false;
                 } else {
@@ -169,20 +186,27 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
 
                         } else {
 
-//                    TextView tvName = (TextView) mView.findViewById(R.id.textViewAbout);
-                            TextView tvAbout = (TextView) mView.findViewById(R.id.textViewAbout);
-                            TextView tvAdd1 = (TextView) mView.findViewById(R.id.textViewAdd1);
-                            TextView tvAdd2 = (TextView) mView.findViewById(R.id.textViewAdd2);
-                            TextView tvContact = (TextView) mView.findViewById(R.id.textViewContactNum);
-                            TextView tvDistance = (TextView) mView.findViewById(R.id.textViewCafeDistance);
-                            TextView tvHours1 = (TextView) mView.findViewById(R.id.textViewHours1);
+//                    TextView tvName = (TextView) findViewById(R.id.textViewAbout);
+                            ImageView ivCafe = (ImageView) findViewById(R.id.imageViewCafeMain);
+                            if (mCafe.images_1 == null || mCafe.images_1.trim().isEmpty()) {
+                                ivCafe.setImageResource(R.drawable.placeholder);
+                            } else {
+                                new ImageViewDownloader(ivCafe).execute(mCafe.images_1);
+                            }
+
+                            TextView tvAbout = (TextView) findViewById(R.id.textViewAbout);
+                            TextView tvAdd1 = (TextView) findViewById(R.id.textViewAdd1);
+                            TextView tvAdd2 = (TextView) findViewById(R.id.textViewAdd2);
+                            TextView tvContact = (TextView) findViewById(R.id.textViewContactNum);
+                            TextView tvDistance = (TextView) findViewById(R.id.textViewCafeDistance);
+                            TextView tvHours1 = (TextView) findViewById(R.id.textViewHours1);
 //                    Log.e("res", cafe.toString());
 
 //                    tvName.setText(cafe.name);
                             tvAbout.setText(mCafe.description);
                             tvAdd1.setText(mCafe.address_1);
 
-                            if (mCafe.address_2 == null || mCafe.address_2 == "") {
+                            if (mCafe.address_2 == null || mCafe.address_2.isEmpty()) {
                                 tvAdd2.setVisibility(View.INVISIBLE);
                             } else {
                                 tvAdd2.setVisibility(View.VISIBLE);
@@ -191,14 +215,20 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
                             tvContact.setText(mCafe.contact);
 //                    tvDistance.setText(CommonUtils.getDistance(cafe.distance));
 
+                            if (mCafe.operatingHourList != null) {
+                                String text = "";
+                                String[] dayArray = getResources().getStringArray(R.array.day_array);
+                                int len = mCafe.operatingHourList.size();
+                                for (int i = 0; i < len; i++) {
+                                    OperatingHour oh = mCafe.operatingHourList.get(i);
+                                    text += dayArray[Integer.parseInt(oh.day)-1] + " " + oh.startTime + "-" + oh.endTime + "\n";
+                                }
+                                tvHours1.setText(text);
+                            }
 
-                            // TODO loop operating hours convert to plain text
-//                            tvHours1.setText(getOperatingHours(cafe.operatingHourList));
 //                    tvDistance.setText();
 
-                            // TODO loop category
-                            // ----> TODO loop category menu -> setup menu adapter
-
+                            prepareCafeMenu(mCafe.categoryList);
                             setMapLatLng();
                             switchView(0);
                         }
@@ -210,18 +240,40 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
         return true;
     }
 
+    private void prepareCafeMenu(List<Category> categories) {
+
+        Log.e("prepareCafeMenu", "lll");
+
+        if (categories == null || categories.size() == 0) {
+            Log.e("prepareCafeMenu", "null?");
+            // TODO show no vouchers
+        } else {
+            Log.e("prepareCafeMenu", "" + categories.size());
+            mCategories.clear();
+            mCafeMenuList.clear();
+
+            int len = categories.size();
+            for (int i = 0; i < len; i++) {
+                mCategories.add(categories.get(i).categoryName);
+                mCafeMenuList.put(categories.get(i).categoryName, categories.get(i).cafeMenuList);
+            }
+            ((CafeMenuAdapter) mMenuListView.getExpandableListAdapter()).setData(mCategories, mCafeMenuList);
+            ((CafeMenuAdapter) mMenuListView.getExpandableListAdapter()).notifyDataSetChanged();
+        }
+
+    }
+
     private void switchView(int id) {
 
         if (id == 0) {
             // Switch to About layout
-            mView.findViewById(R.id.llCafeAbout).setVisibility(View.VISIBLE);
-            mView.findViewById(R.id.llCafeMenu).setVisibility(View.GONE);
+            findViewById(R.id.llCafeAbout).setVisibility(View.VISIBLE);
+            findViewById(R.id.llCafeMenu).setVisibility(View.GONE);
         } else {
             // Switch to Menu layout
-            mView.findViewById(R.id.llCafeAbout).setVisibility(View.GONE);
-            mView.findViewById(R.id.llCafeMenu).setVisibility(View.VISIBLE);
+            findViewById(R.id.llCafeAbout).setVisibility(View.GONE);
+            findViewById(R.id.llCafeMenu).setVisibility(View.VISIBLE);
         }
-
     }
 
     private void setMapLatLng() {
@@ -242,79 +294,15 @@ public class CafeActivity extends NavDrawerActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
-
         mMap = map;
-//        LatLng sydney = new LatLng(-33.867, 151.206);
-//
-//        map.setMyLocationEnabled(true);
-//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-//
-//        map.addMarker(new MarkerOptions()
-//                .title("Sydney")
-//                .snippet("The most populous city in Australia.")
-//                .position(sydney));
-        if (mCafe != null) {
-            if (mCafe.latitude != "" && mCafe.longitude !="") {
-                LatLng sydney = new LatLng(-33.867, 151.206);
-
-                map.setMyLocationEnabled(true);
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-                map.addMarker(new MarkerOptions()
-                        .title("Sydney")
-                        .snippet("The most populous city in Australia.")
-                        .position(sydney));
-            }
-        }
     }
 
-    /*// Assumption: "operating" list will always come in a size of 7
-    private String getOperatingHours(List<OperatingHour> list) {
-        Resources res = getResources();
-        String[] days = res.getStringArray(R.array.day_array);
+    public void onClickCafeAbout(View view) {
+        switchView(0);
+    }
 
-        String text = "";
-        OperatingHour tmp;
+    public void onClickCafeMenu(View view) {
+        switchView(1);
+    }
 
-        if (list == null || list.size() == 0) {
-            text = getString(R.string.no_info);
-        } else {
-
-            // Get data of day index 1
-            tmp = new OperatingHour(list.get(0).day, list.get(0).startTime, list.get(0).endTime);
-
-            for(int i = 1; i < list.size(); i++) {
-                Log.e("i is", "" + String.valueOf(i));
-                if (list.get(i).startTime != tmp.startTime && list.get(i).endTime != tmp.endTime) {
-                    String endDay = "";
-                    if (Integer.parseInt(tmp.day) != i) {
-                        endDay = "- " + days[Integer.parseInt(list.get(i).day)];
-                    }
-
-                    text += days[Integer.parseInt(tmp.day)] + " " + endDay + tmp.startTime + " - " + tmp.endTime + "\n";
-                    tmp = new OperatingHour(list.get(i).day, list.get(i).startTime, list.get(i).endTime);
-                }
-            }
-
-            if (Integer.parseInt(tmp.day) == 5) {
-                text += days[Integer.parseInt(tmp.day)] + " " + tmp.startTime + " - " + tmp.endTime;
-            } else {
-                text += days[Integer.parseInt(tmp.day)] + " - " + days[Integer.parseInt(list.get(6).day)] + " " + tmp.startTime + " - " + tmp.endTime;
-            }
-
-        }
-
-        return text;
-    }*/
-
-//    private String formatOperatingHour(OperatingHour prev, OperatingHour current) {
-//        String endDay = "";
-//        if (Integer.parseInt(prev.day) != i-1) {
-//            endDay += "- " + days[Integer.parseInt(list.get(i).day)];
-//        }
-//
-//        text += days[Integer.parseInt(tmp.day)] + " " + endDay + tmp.startTime + " - " + tmp.endTime + "\n";
-//        tmp = new OperatingHour(list.get(i).day, list.get(i).startTime, list.get(i).endTime);
-//    }
-//
 }

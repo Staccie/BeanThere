@@ -1,7 +1,6 @@
 package com.beanthere.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beanthere.R;
-import com.beanthere.utils.CommonUtils;
 import com.beanthere.objects.Cafe;
+import com.beanthere.utils.CommonUtils;
+import com.beanthere.utils.ImageViewDownloader;
 
 import java.util.List;
 
-/**
- * Created by staccie on 9/20/15.
- */
 public class CafeListAdapter extends BaseAdapter {
 
     Context mContext;
@@ -70,10 +67,10 @@ public class CafeListAdapter extends BaseAdapter {
 
         Log.e("view holder " + position, cafe.name);
 
-        if (cafe.images_1 == null || cafe.images_1.trim() == "") {
+        if (cafe.images_1 == null || cafe.images_1.trim().isEmpty()) {
             holder.ivCafe.setImageResource(R.drawable.placeholder);
         } else {
-            holder.ivCafe.setImageURI(Uri.parse(cafe.images_1));
+            new ImageViewDownloader(holder.ivCafe).execute(cafe.images_1);
         }
         holder.tvName.setText(cafe.name);
 

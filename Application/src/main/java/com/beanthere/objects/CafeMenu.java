@@ -15,4 +15,7 @@ public class CafeMenu {
 
     @SerializedName("description")
     public String desc;
+
+    @SerializedName("image")
+    public String image;
 }

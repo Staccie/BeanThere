@@ -16,7 +16,6 @@
 
 package com.beanthere.activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
@@ -26,12 +25,14 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,12 +40,16 @@ import android.widget.Toast;
 
 import com.beanthere.R;
 import com.beanthere.adapter.MenuAdapter;
+import com.beanthere.dialoghelper.BeanDialogInterface.OnInputDialogDismissListener;
 import com.beanthere.dialoghelper.ConfirmationDialog;
-import com.beanthere.dialoghelper.NoticeDialogFragment;
+import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
+import com.beanthere.webservice.HttpHandler;
 
 
-public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemClickListener, LocationListener, BeanLocationListener.LocationReceiver {
+public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnItemClickListener,
+        LocationListener, BeanLocationListener.LocationReceiver,
+        OnInputDialogDismissListener {
 
     private static LocationManager mCoreLocationManager;
     private static Location mCoreLocation;
@@ -55,7 +60,7 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mPlanetTitles;
+    private String[] mNavDrawerTitle;
 
     private LocationManager mLocationManager;
     private BeanLocationListener mLocationListener;
@@ -68,7 +73,7 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         setContentView(R.layout.activity_navigation_drawer);
 
         mTitle = mDrawerTitle = getTitle();
-        mPlanetTitles = getResources().getStringArray(R.array.menu_array);
+        mNavDrawerTitle = getResources().getStringArray(R.array.menu_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 
@@ -83,7 +88,7 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         mDrawerList.setLayoutManager(layoutManager);
 
 
-        mDrawerList.setAdapter(new MenuAdapter(mPlanetTitles, this));
+        mDrawerList.setAdapter(new MenuAdapter(mNavDrawerTitle, this));
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -171,9 +176,22 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
                 finish();
                 break;
             case 1:
-                startActivity(new Intent(this, PromoListActivity.class));
+                startActivity(new Intent(this, CafeFilterActivity.class));
+                finish();
                 break;
             case 2:
+                showPromoDialog("getpromo", "0");
+
+                break;
+            case 3:
+                startActivity(new Intent(this, VoucherListActivity.class));
+                finish();
+                break;
+            case 4:
+                startActivity(new Intent(this, ProfileActivity.class));
+                finish();
+                break;
+            case 5:
                 logout();
                 break;
             default: break;
@@ -181,11 +199,21 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         }
 
         // update selected item title, then close the drawer
-        setTitle(mPlanetTitles[position]);
+        setTitle(mNavDrawerTitle[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
+    protected void showPromoDialog(String tag, String id) {
+        FragmentManager fm = getFragmentManager();
+        PromoInputDialog inputDialog = new PromoInputDialog().newInstance(id);
+        inputDialog.show(fm, tag);
+    }
+
     private void logout() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -245,12 +273,6 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         }
     }
 
-    protected void showNoticeDialog(String title, String message, String neutralButton) {
-        FragmentManager fm = getFragmentManager();
-        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
-        noticeDialog.show(fm, "noticeDialog");
-    }
-
     private void promptEnableGPS() {
         FragmentManager fm = getFragmentManager();
         ConfirmationDialog confirmationDialog = ConfirmationDialog.newInstance(getString(R.string.enable_gps_title), getString(R.string.enable_gps_message));
@@ -288,6 +310,42 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         mCoreLocation = null;
     }
 
+    class GetPromoTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            Log.e("GetPromoTask", "doInBackground");
+
+            HttpHandler req = new HttpHandler();
+            String response = req.getVoucher(params[0]);
+
+            return response;
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+
+            if (response == null && response.isEmpty()) {
+                showNoticeDialog(getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
+            } else {
+
+//                Gson gson = new Gson();
+//                GeneralResponse genResponse;
+//
+//                genResponse = gson.fromJson(response, GeneralResponse.class);
+//
+//                if (genResponse.error) {
+//                    showNoticeDialog(getString(R.string.login_failed), genResponse.error_message, "");
+//                } else {
+//               // TODO show dialog to redirect to promo list
+//                }
+            }
+        }
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         mCoreLocation = location;
@@ -318,5 +376,12 @@ public class NavDrawerActivity extends Activity implements MenuAdapter.OnItemCli
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
 
+    }
+
+    @Override
+    public void onInputDialogDismiss(String tag, String data) {
+        if (tag.equals("getpromo")) {
+            new GetPromoTask().execute(data);
+        }
     }
 }

@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:id="@+id/imageViewCafeMenu"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/placeholder"/>
 
     <TextView
         android:id="@+id/textViewMenuTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageViewCafeMenu"
+        style="@style/LargeBoldText"
         android:padding="5dp" />
 
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray"/>
+    <TextView
+        android:id="@+id/textViewMenuDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageViewCafeMenu"
+        android:layout_below="@id/textViewMenuTitle"
+        style="@style/MediumText"
+        android:padding="5dp" />
 
-</LinearLayout>
+</RelativeLayout>

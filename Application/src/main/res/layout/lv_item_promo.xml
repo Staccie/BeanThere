@@ -1,44 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="80dp"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
         android:id="@+id/imageViewVoucher"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/placeholder"
-        android:background="@color/black_87"/>
+        android:src="@drawable/placeholder"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textViewVoucherTitle"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/imageViewVoucher" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/black_54">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/textViewVoucherExpiryDate"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textViewVoucherTitle"
-        android:layout_toRightOf="@+id/imageViewVoucher"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get a free cuppa"
+            android:id="@+id/textViewVoucherTitle"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            style="@style/LargeText"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/buttonRedeem"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textViewVoucherExpiryDate"
-        android:layout_toRightOf="@+id/imageViewVoucher" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SmallText"
+            android:text="@string/promo_expire"
+            android:id="@+id/textViewVoucherExpiryDate"
+            android:layout_marginLeft="10dp"/>
 
-</RelativeLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle"
+            style="@style/MediumText"
+            android:text="@string/redeem_now"
+            android:id="@+id/buttonRedeem"
+            android:layout_marginLeft="10dp"/>
+    </LinearLayout>
+
+</FrameLayout>

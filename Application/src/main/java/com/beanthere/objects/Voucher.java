@@ -14,8 +14,11 @@ public class Voucher {
     @SerializedName("expiry")
     public String expiry;
 
-    @SerializedName("custom_naming")
+    @SerializedName("status")
     public String status;
+
+    @SerializedName("images_1")
+    public String images_1;
 
     @SerializedName("merchants")
     public List<Cafe> cafeList;

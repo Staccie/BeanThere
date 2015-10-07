@@ -18,7 +18,11 @@
 
     <string-array name="menu_array">
         <item>Cafe List</item>
-        <item>Promotion List</item>
+        <item>Cafe Filter</item>
+        <item>Enter Promo Code</item>
+        <!--<item>Promotion List</item>-->
+        <item>Wallet</item>
+        <item>Settings</item>
         <item>Logout</item>
     </string-array>
 
@@ -76,15 +80,26 @@
     <string name="no">No</string>
     <string name="ok">OK</string>
 
-    <!--DIALOG MESSAGE-->
+    <!--DIALOG TITLE AND MESSAGE-->
     <string name="error_fill_in_all">Please fill in all fields</string>
     <string name="login_failed">Login failed</string>
     <string name="invalid_server_response">Invalid server response</string>
     <string name="enable_gps_title">Enable Location Service</string>
     <string name="enable_gps_message">Enable Location Service to help us find the nearest cafe for you?</string>
-
+    <string name="enter_promo_code_title">Enter Promo Code</string>
+    <string name="enter_promo_code_message">Enter given code to enjoy discounts and freebies!</string>
+    
     <!--GENERAL-->
     <string name="no_info">No info</string>
+    <string name="required_field">* Required field</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="redeeem_promo_message">Please allow the merchant to enter the following 4 digit validation code.</string>
+    <string name="redeeem_promo_title">Redeem Now</string>
+    <string name="error_title">Error</string>
+    <string name="promo_expire">Expires in %1$s! days</string>
+    <string name="redeem_now">Redeem Now</string>
 
 
 </resources>
