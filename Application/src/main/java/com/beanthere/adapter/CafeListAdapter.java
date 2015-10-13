@@ -54,7 +54,7 @@ public class CafeListAdapter extends BaseAdapter {
             holder.tvName = (TextView) container.findViewById(R.id.textViewCafeName);
             holder.tvDistance = (TextView) container.findViewById(R.id.textViewCafeDistance);
             holder.tvAddress1 = (TextView) container.findViewById(R.id.textViewCafeAddress1);
-            holder.tvAddress2 = (TextView) container.findViewById(R.id.textViewCafeAddress2);
+//            holder.tvAddress2 = (TextView) container.findViewById(R.id.textViewCafeAddress2);
 
 
             container.setTag(holder);
@@ -78,8 +78,8 @@ public class CafeListAdapter extends BaseAdapter {
         distance = distance == "" ? "" : distance + "KM";
 
         holder.tvDistance.setText(distance);
-        holder.tvAddress1.setText(cafe.address_1);
-        holder.tvAddress2.setText(cafe.address_2);
+        holder.tvAddress1.setText(cafe.address_1 + " " + cafe.address_2);
+//        holder.tvAddress2.setText(cafe.address_2);
 
         return container;
     }
@@ -89,6 +89,6 @@ public class CafeListAdapter extends BaseAdapter {
         TextView tvName;
         TextView tvDistance;
         TextView tvAddress1;
-        TextView tvAddress2;
+//        TextView tvAddress2;
     }
 }

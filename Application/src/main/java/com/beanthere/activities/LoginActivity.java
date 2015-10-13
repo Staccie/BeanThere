@@ -58,6 +58,7 @@ public class LoginActivity extends Activity {
 
         SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
+        editor.putString("u_id", user.id);
         editor.putString("apikey", user.api_key);
         editor.putString("email", user.email);
         editor.putString("first_name", user.first_name);

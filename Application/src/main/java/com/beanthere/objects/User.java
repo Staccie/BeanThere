@@ -16,6 +16,9 @@ public class User {
     @SerializedName("message")
     public String error_message;
 
+    @SerializedName("u_id")
+    public String id;
+
     @SerializedName("email")
     public String email;
 

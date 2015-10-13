@@ -219,7 +219,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                                 int len = mCafe.operatingHourList.size();
                                 for (int i = 0; i < len; i++) {
                                     OperatingHour oh = mCafe.operatingHourList.get(i);
-                                    text += dayArray[Integer.parseInt(oh.day)-1] + " " + oh.startTime + "-" + oh.endTime + "\n";
+                                    text += dayArray[Integer.parseInt(oh.day)-1] + " " + oh.startTime.substring(0, 5) + " - " + oh.endTime.substring(0, 5) + "\n";
                                 }
                                 tvHours1.setText(text);
                             }

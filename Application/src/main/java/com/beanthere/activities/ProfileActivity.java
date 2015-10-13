@@ -74,7 +74,7 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
         } else if (!firstName.equals(lastName)) {
             showNoticeDialog("", getString(R.string.error_title), "Password not match.", null);
         } else {
-            new UpdateProfileTask().execute("", password, firstName, lastName, dob);
+            new UpdateProfileTask().execute(SharedPreferencesManager.getAPIKey(this), SharedPreferencesManager.getString(this, "u_id"), SharedPreferencesManager.getString(this, "email"), password, firstName, lastName, dob);
         }
     }
 
@@ -124,7 +124,7 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
             Log.e("Register", "doInBackground");
 
             HttpHandler req = new HttpHandler();
-            String response = req.updateProfile(params[0], params[1], params[2], params[3], params[4], "", "");
+            String response = req.updateProfile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], "", "");
 
             return response;
 

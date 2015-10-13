@@ -1,7 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="menu_titles">
+
+    <string-array name="menu_array">
         <item>Cafe List</item>
+        <item>Cafe Filter</item>
+        <item>Enter Promo Code</item>
+        <!--<item>Promotion List</item>-->
+        <item>Wallet</item>
+        <item>Settings</item>
         <item>Logout</item>
     </string-array>
+
+    <string-array name="day_array">
+        <item>Mon</item>
+        <item>Tues</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+
+    <integer-array name="menu_icon">
+        <item>@drawable/ic_menu_coffee</item>
+        <item>@drawable/ic_menu_filter</item>
+        <item>@drawable/ic_menu_promo_code</item>
+        <item>@drawable/ic_menu_wallet</item>
+        <item>@drawable/ic_menu_settings</item>
+        <item>@drawable/ic_menu_logout</item>
+    </integer-array>
 </resources>

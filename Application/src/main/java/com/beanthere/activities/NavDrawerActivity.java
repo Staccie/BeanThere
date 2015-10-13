@@ -16,16 +16,19 @@
 
 package com.beanthere.activities;
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -39,7 +42,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.beanthere.R;
-import com.beanthere.adapter.MenuAdapter;
+import com.beanthere.adapter.NavDrawerAdapter;
 import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.BeanDialogInterface.OnInputDialogDismissListener;
@@ -51,7 +54,7 @@ import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
 
-public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnItemClickListener,
+public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.OnItemClickListener,
         LocationListener, BeanLocationListener.LocationReceiver,
         OnInputDialogDismissListener, BeanDialogInterface.OnPositiveClickListener {
 
@@ -65,6 +68,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mNavDrawerTitle;
+    private int[] mNavDrawerIcon = {R.drawable.ic_menu_coffee, R.drawable.ic_menu_filter, R.drawable.ic_menu_promo_code, R.drawable.ic_menu_wallet, R.drawable.ic_menu_settings, R.drawable.ic_menu_logout};
 
     private LocationManager mLocationManager;
     private BeanLocationListener mLocationListener;
@@ -78,8 +82,13 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
 
         mTitle = mDrawerTitle = getTitle();
         mNavDrawerTitle = getResources().getStringArray(R.array.menu_array);
+//        mNavDrawerIcon = getResources().getIntArray(R.array.menu_icon);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
+
+        for (int i = 0; i < mNavDrawerIcon.length; i++) {
+            Log.e("mNavDrawerIcon", "[" + i + "] = " + mNavDrawerIcon[i]);
+        }
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -91,8 +100,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mDrawerList.setLayoutManager(layoutManager);
 
-
-        mDrawerList.setAdapter(new MenuAdapter(mNavDrawerTitle, this));
+        mDrawerList.setAdapter(new NavDrawerAdapter(mNavDrawerTitle, mNavDrawerIcon, this));
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -118,6 +126,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+
         if (savedInstanceState == null) {
 //            selectItem(0);
         }
@@ -127,7 +136,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+//        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
         return true;
     }
 
@@ -168,39 +177,40 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
     /* The click listener for RecyclerView in the navigation drawer */
     @Override
     public void onClick(View view, int position) {
-        selectItem(position);
-    }
-
-    private void selectItem(int position) {
 
         switch (position) {
 
             case 0:
-                startActivity(new Intent(this, CafeListActivity.class));
+                startActivity(new Intent(this, ProfileActivity.class));
                 break;
             case 1:
-                startActivity(new Intent(this, CafeFilterActivity.class));
+                startActivity(new Intent(this, CafeListActivity.class));
                 break;
             case 2:
+                startActivity(new Intent(this, CafeFilterActivity.class));
+                break;
+            case 3:
                 showPromoDialog("getpromo", "0");
 
                 break;
-            case 3:
+            case 4:
                 startActivity(new Intent(this, VoucherListActivity.class));
                 break;
-            case 4:
+            case 5:
                 startActivity(new Intent(this, ProfileActivity.class));
                 break;
-            case 5:
+            case 6:
                 logout();
                 break;
-            default: break;
+            default:
+                break;
 
         }
 
         // update selected item title, then close the drawer
         setTitle(mNavDrawerTitle[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+
     }
 
     protected void showPromoDialog(String tag, String id) {
@@ -276,6 +286,18 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
         String provider = mLocationManager.getBestProvider(new Criteria(), true);
         if (provider != null) {
             mLocationListener = new BeanLocationListener(this, tag, fieldId);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    return;
+                }
+            }
             mLocationManager.requestSingleUpdate(provider, mLocationListener, null);
         }
     }
@@ -302,10 +324,34 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
 
         // always listen to two providers
         mCoreLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 1, this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
         mCoreLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 1, this);
     }
 
     protected void removeLocationListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
         mCoreLocationManager.removeUpdates(this);
     }
 
@@ -332,7 +378,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
             Log.e("GetPromoTask", "doInBackground");
 
             HttpHandler req = new HttpHandler();
-            String response = req.getVoucher(params[0]);
+            String response = req.getVoucher(params[0], params[1]);
 
             return response;
 
@@ -393,7 +439,7 @@ public class NavDrawerActivity extends BaseActivity implements MenuAdapter.OnIte
     @Override
     public void onInputDialogDismiss(String tag, String data) {
         if (tag.equals("getpromo")) {
-            new GetPromoTask().execute(data);
+            new GetPromoTask().execute(data, SharedPreferencesManager.getAPIKey(this));
         }
     }
 }

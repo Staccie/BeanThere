@@ -115,10 +115,10 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("GetPromoTask", "doInBackground");
+            Log.e("RedeemPromoTask", "doInBackground");
 
             HttpHandler req = new HttpHandler();
-            String response = req.redeemVoucher(params[0], params[1]);
+            String response = req.redeemVoucher(params[0], params[1], params[2]);
 
             return response;
 
@@ -159,7 +159,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
     public void onInputDialogDismiss(String tag, String data) {
         if (tag.equals("redeemPromo")) {
             String[] params = data.split(",");
-            new RedeemPromoTask().execute(params[0], params[1]);
+            new RedeemPromoTask().execute(params[0], params[1], SharedPreferencesManager.getAPIKey(this));
         }
     }
 

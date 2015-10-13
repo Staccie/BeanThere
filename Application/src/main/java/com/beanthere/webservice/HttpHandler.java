@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -79,20 +80,23 @@ public class HttpHandler {
         return httpGet("vouchers", apiKey);
     }
 
-    public String getVoucher(String promoCode) {
-        return "";
+    public String getVoucher(String voucher_code, String apikey) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("voucher_code", voucher_code);
+
+        return httpPost(map, "vouchers/claim", apikey);
     }
 
-    public String redeemVoucher(String voucherId, String code) {
+    public String redeemVoucher(String voucherId, String code, String apikey) {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("tx_vouchers_id", voucherId);
         map.put("pin", code);
 
-        return httpPost(map, "vouchers/redeem", "");
+        return httpPost(map, "vouchers/redeem", apikey);
     }
 
-    public String updateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
+    public String updateProfile(String apikey, String user_id, String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("email", email);
@@ -105,7 +109,17 @@ public class HttpHandler {
         map.put("_METHOD", "PUT");
 //        Log.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob);
         // TODO get user id in Login API and send over?
-        return httpPost(map, "user/111", "");
+        return httpPost(map, "user/" + user_id, apikey);
+    }
+
+    public String getCafeFilterList(String searchText, Double mLatitude, Double mLongitude, String apikey) {
+
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("search", searchText);
+        map.put("latitude", mLatitude == null ? "" : mLatitude);
+        map.put("longitude", mLongitude == null ? "" : mLongitude);
+
+        return httpPost(map, "merchants/search", apikey);
     }
 
     /*public JSONObject setUpdateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
@@ -150,6 +164,8 @@ public class HttpHandler {
             String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
 
             Log.e("httpPost", requestURL);
+
+//            printMap(map);
 
             URL url = new URL(requestURL);
 
@@ -243,5 +259,4 @@ public class HttpHandler {
         return response;
 
     }
-
 }

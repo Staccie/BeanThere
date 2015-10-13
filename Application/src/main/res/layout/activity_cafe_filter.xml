@@ -18,5 +18,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listViewCafeFilters"
+        android:entries="@layout/lv_item_cafe_filter"
         android:layout_weight="1" />
 </LinearLayout>
