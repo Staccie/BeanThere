@@ -4,12 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:gravity="center">
 
     <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBarCafeDetails"
@@ -67,21 +66,31 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="150dp"
                     android:background="@android:color/white"
                     android:id="@+id/imageViewCafeMain"
-                    android:src="@drawable/placeholder"/>
+                    android:src="@drawable/placeholder"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/textViewCafeName"
-                    android:gravity="center"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/white"
-                    android:background="@color/black_54"
-                    android:text="Cafe Name"/>
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:id="@+id/textViewCafeName"-->
+                    <!--android:gravity="center"-->
+                    <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:textColor="@android:color/white"-->
+                    <!--android:background="@color/black_54"-->
+                    <!--android:text="Cafe Name"/>-->
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:id="@+id/imageViewCafeLogo"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center"/>
 
             </FrameLayout>
 

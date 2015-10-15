@@ -10,10 +10,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.utils.Validator;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DatePickerFragment;
-import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.OnDataSetListener;
 import com.beanthere.webservice.HttpHandler;
 
@@ -28,7 +28,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_new);
+        setContentView(R.layout.activity_register);
 
         // TODO remove testing code
         ((EditText) findViewById(R.id.registerEmail)).setText("ice@gmail.com");
@@ -112,7 +112,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
             Log.e("Register", "doInBackground");
 
             HttpHandler req = new HttpHandler();
-            String response = req.register(params[0], params[1], params[2], params[3], params[4], "", "");
+            String response = req.register(SharedPreferencesManager.getAPIKey(RegisterActivity.this), params[0], params[1], params[2], params[3], params[4], "", "");
 
             return response;
 
@@ -132,7 +132,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
+            if (response == null || response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
             } else {
 

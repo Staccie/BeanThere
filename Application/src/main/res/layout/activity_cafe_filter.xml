@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#FFFFFF"
+    android:gravity="center">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -13,16 +14,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchView"
-            android:background="@android:color/white"
-            android:layout_gravity="end" />
+            android:background="@drawable/rectangle_black"
+            android:layout_gravity="end"
+            android:queryHint="Search cafe"
+            android:baselineAligned="true" />
     </LinearLayout>
 
     <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBarCafeFilterList"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:layout_weight="1"/>
 
     <ListView
         android:layout_width="match_parent"

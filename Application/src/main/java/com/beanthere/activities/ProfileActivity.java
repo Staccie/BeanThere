@@ -15,16 +15,11 @@ import com.beanthere.R;
 import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DatePickerFragment;
-import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.OnDataSetListener;
 import com.beanthere.objects.GeneralResponse;
-import com.beanthere.objects.User;
 import com.beanthere.utils.Validator;
 import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ProfileActivity extends NavDrawerActivity implements OnDataSetListener, BeanDialogInterface.OnPositiveClickListener {
 
@@ -37,7 +32,7 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_profile_new, null,false);
+        View view = layoutInflater.inflate(R.layout.activity_profile, null,false);
         frameLayout.addView(view);
 
         // TODO Populate user details
@@ -134,7 +129,7 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
+            if (response == null || response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
             } else {
 

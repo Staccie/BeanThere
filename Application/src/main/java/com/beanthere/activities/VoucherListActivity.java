@@ -147,7 +147,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
+            if (response == null || response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
                 Gson gson = new Gson();

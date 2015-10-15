@@ -62,7 +62,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new LoadCafeList().execute(SharedPreferencesManager.getAPIKey(CafeListActivity.this));
+                new LoadCafeList(false).execute(SharedPreferencesManager.getAPIKey(CafeListActivity.this));
             }
         });
 
@@ -88,7 +88,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
         checkLocationService();
 
-        new LoadCafeList().execute(SharedPreferencesManager.getAPIKey(this));
+        new LoadCafeList(true).execute(SharedPreferencesManager.getAPIKey(this));
 
 //        mWebServiceCallback = new WebServiceLoaderCallback();
 //        mDBCallback = new DBLoaderCallback();
@@ -108,11 +108,19 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
     class LoadCafeList extends AsyncTask<String, Void, String> {
 
+        private boolean mIsInitialLoad;
+
+        protected LoadCafeList(boolean isInitialLoad) {
+            mIsInitialLoad = isInitialLoad;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            mProgressBar.setVisibility(View.VISIBLE);
-            mListView.setVisibility(View.GONE);
+            if (mIsInitialLoad) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mListView.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -137,23 +145,28 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
+            if (mIsInitialLoad) {
+                mProgressBar.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
+            }
+
             mRefreshLayout.setRefreshing(false);
-//            mProgressBar.setVisibility(View.GONE);
-            mListView.setVisibility(View.VISIBLE);
 
-            if (response == null && response.isEmpty()) {
-                showNoticeDialog("", getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
-            } else {
-
-                Gson gson = new Gson();
-                GeneralResponse genResponse;
-
-                genResponse = gson.fromJson(response, GeneralResponse.class);
-
-                if (genResponse.error) {
-                    showNoticeDialog("", getString(R.string.login_failed), genResponse.error_message, "");
+            if (!isCancelled() && !isFinishing()) {
+                if (response == null || response.isEmpty()) {
+                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
                 } else {
-                    updateCafeList(genResponse.cafeList);
+
+                    Gson gson = new Gson();
+                    GeneralResponse genResponse;
+
+                    genResponse = gson.fromJson(response, GeneralResponse.class);
+
+                    if (genResponse.error) {
+                        showNoticeDialog("", getString(R.string.login_failed), genResponse.error_message, "");
+                    } else {
+                        updateCafeList(genResponse.cafeList);
+                    }
                 }
             }
         }

@@ -9,8 +9,12 @@ public class Validator {
 
     public static boolean isComplete(String... input) {
 
-        for (int i= 0; i < input.length; i++) {
-            if (input.length == 0 ) {
+        if (input == null || input.length == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < input.length; i++) {
+            if (input[i] == null || input[i].isEmpty()) {
                 Log.e("input", input[i] == null ? "null" : input[i]);
                 return false;
             }

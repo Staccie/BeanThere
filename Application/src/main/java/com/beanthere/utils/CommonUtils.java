@@ -1,5 +1,12 @@
 package com.beanthere.utils;
 
+import android.content.Context;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
+
+import com.beanthere.objects.AppObject;
+
 /**
  * Created by staccie
  */
@@ -30,5 +37,13 @@ public class CommonUtils {
             result = "0".concat(result);
         }
         return result;
+    }
+
+    public static void setScreenWidth(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        AppObject.screenWidth = size.x;
     }
 }

@@ -60,7 +60,7 @@ public class CafeMenuAdapter extends BaseExpandableListAdapter {
         if (menu.image == null || menu.image.trim().isEmpty()) {
             ivMenu.setImageResource(R.drawable.placeholder);
         } else {
-            new ImageViewDownloader(ivMenu).execute(menu.image);
+            new ImageViewDownloader(ivMenu, true).execute(menu.image);
         }
 
         tvMenuTitle.setText(menu.name);

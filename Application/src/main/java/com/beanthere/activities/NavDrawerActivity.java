@@ -56,7 +56,10 @@ import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.webservice.HttpHandler;
+import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
+
+import javax.xml.namespace.NamespaceContext;
 
 
 public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnItemClickListener,
@@ -172,6 +175,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
         // Handle action buttons
         switch (item.getItemId()) {
             case R.id.action_websearch:
@@ -236,13 +240,52 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     }
 
     protected void logout() {
-        SharedPreferences settings = getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
-        settings.edit().clear().commit();
 
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+        if (SharedPreferencesManager.getInt(this, "logintype") == 0) {
+
+            SharedPreferences settings = getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
+            settings.edit().clear().commit();
+
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+//            LoginManager.getInstance().logOut();
+//            Session session = Session.getActiveSession();
+//            if (session != null) {
+//
+//                if (!session.isClosed()) {
+//                    session.closeAndClearTokenInformation();
+//                    //clear your preferences if saved
+//                }
+//            } else {
+//
+//                session = new Session(context);
+//                Session.setActiveSession(session);
+//
+//                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+
+//            }
+            String fb_id = SharedPreferencesManager.getString(this, "fb_user_id");
+            String email = SharedPreferencesManager.getString(this, "email");
+
+            getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE).edit().clear().commit();
+
+            // Save email and fb_id to login user next time when user login
+            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("fb_id", fb_id);
+            editor.putString("email", email);
+            editor.commit();
+
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+
+        }
     }
 
     @Override
@@ -413,7 +456,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
+            if (response == null || response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 

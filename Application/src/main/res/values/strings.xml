@@ -74,7 +74,6 @@
     <string name="required_field">* Required field</string>
     <string name="title_activity_profile">Settings</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="redeeem_promo_message">Please allow the merchant to enter the following 4 digit validation code.</string>
     <string name="redeeem_promo_title">Redeem Now</string>
     <string name="error_title">Error</string>

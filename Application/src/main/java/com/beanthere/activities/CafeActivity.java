@@ -144,7 +144,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                 String response = req.getMerchantDetails(mCafeId, params[0]);
 
                 if (response == null || response.isEmpty()) {
-                    //  Dialog cannot get cafe detail
+                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
                     return false;
                 } else {
                     return loadCafeDetails(response);
@@ -201,8 +201,16 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                             if (mCafe.images_1 == null || mCafe.images_1.trim().isEmpty()) {
                                 ivCafe.setImageResource(R.drawable.placeholder);
                             } else {
-                                new ImageViewDownloader(ivCafe).execute(mCafe.images_1);
+                                new ImageViewDownloader(ivCafe, false).execute(mCafe.images_1);
                             }
+
+                            ImageView ivLogo = (ImageView) findViewById(R.id.imageViewCafeLogo);
+                            if (mCafe.logo == null || mCafe.logo.trim().isEmpty()) {
+//                                ivCafe.setImageResource(R.drawable.placeholder);
+                            } else {
+                                new ImageViewDownloader(ivLogo, true).execute(mCafe.logo);
+                            }
+
 
                             TextView tvAbout = (TextView) findViewById(R.id.textViewAbout);
                             TextView tvAdd1 = (TextView) findViewById(R.id.textViewAdd1);
@@ -214,7 +222,13 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
 //                    tvName.setText(cafe.name);
                             tvAbout.setText(mCafe.description);
-                            tvAdd1.setText(mCafe.address_1);
+
+                            if (mCafe.address_1 == null || mCafe.address_1.isEmpty()) {
+                                tvAdd1.setVisibility(View.GONE);
+                            } else {
+                                tvAdd1.setText(mCafe.address_1);
+                                tvAdd1.setVisibility(View.VISIBLE);
+                            }
 
                             if (mCafe.address_2 == null || mCafe.address_2.isEmpty()) {
                                 tvAdd2.setVisibility(View.INVISIBLE);
@@ -238,7 +252,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
 //                    tvDistance.setText();
 
-                            prepareCafeMenu(mCafe.categoryList);
+//                            prepareCafeMenu(mCafe.categoryList);
                             setMapLatLng();
                             switchView(0);
                         }

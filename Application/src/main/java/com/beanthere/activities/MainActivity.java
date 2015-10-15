@@ -33,11 +33,14 @@ import android.widget.TextView;
 
 import com.beanthere.R;
 import com.beanthere.data.SharedPreferencesManager;
+import com.beanthere.dialoghelper.DialogHelper;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.objects.AppObject;
 import com.beanthere.objects.User;
+import com.beanthere.utils.CommonUtils;
 import com.beanthere.utils.IOUtils;
 import com.beanthere.webservice.HttpHandler;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -66,7 +69,6 @@ import java.util.Arrays;
 public class MainActivity extends Activity {
 
     CallbackManager callbackManager;
-    private ImageView ivTest;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,17 +76,22 @@ public class MainActivity extends Activity {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_main);
-        ivTest = (ImageView) findViewById(R.id.imageViewBeanLogo);
+
+        CommonUtils.setScreenWidth(this);
 
         LoginButton fbLoginButton = (LoginButton) findViewById(R.id.login_button);
-        fbLoginButton.setReadPermissions(Arrays.asList("basic_info", "email"));
+        fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
 
         callbackManager = CallbackManager.Factory.create();
+
+//        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
+
+                        final AccessToken token = loginResult.getAccessToken();
 
                         // Get user profile
                         GraphRequest.newMeRequest(
@@ -95,7 +102,7 @@ public class MainActivity extends Activity {
                                             // TODO handle error
                                             Log.e("onCompleted", "ERROR");
                                         } else {
-                                            registerLoginUser(json);
+                                            registerLoginUser(token.toString(), json);
                                         }
                                     }
 
@@ -113,8 +120,6 @@ public class MainActivity extends Activity {
                     }
                 });
 
-//        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email"));
-
         autoLogin();
 
 
@@ -124,19 +129,25 @@ public class MainActivity extends Activity {
 
         int loginType = SharedPreferencesManager.getInt(this, "logintype");
 
+        String email = SharedPreferencesManager.getString(this, "email");
+        String pw = SharedPreferencesManager.getString(this, "p");
+
         if (loginType == 1) {
-
-            String email = SharedPreferencesManager.getString(this, "email");
-            String pw = SharedPreferencesManager.getString(this, "p");
-
             if (!email.isEmpty() && !pw.isEmpty()) {
                 new Login().execute(email, pw);
+            }
+        } else if (loginType == 0) {
+            if (email.isEmpty()) {
+                // Prompt for email
+//                FragmentManager fm = getFragmentManager();
+//                NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+//                noticeDialog.show(fm, "");
             }
         }
 
     }
 
-    private void registerLoginUser(JSONObject json) {
+    private void registerLoginUser(String accessToken, JSONObject json) {
 
         String jsonresult = String.valueOf(json);
         Log.e("JSON Result", jsonresult);
@@ -205,8 +216,10 @@ public class MainActivity extends Activity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
-                // TODO handleRequestFail
+            if (response == null || response.isEmpty()) {
+                FragmentManager fm = getFragmentManager();
+                NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+                noticeDialog.show(fm, "");
             } else {
 
                 Gson gson = new Gson();
@@ -272,7 +285,7 @@ public class MainActivity extends Activity {
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
 //            startActivity(new Intent(MainActivity.this, CafeListActivity.class));
-            ivTest.setImageBitmap(bm);
+//            ivTest.setImageBitmap(bm);
         }
     }
 

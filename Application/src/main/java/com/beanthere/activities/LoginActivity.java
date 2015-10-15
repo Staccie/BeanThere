@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.objects.User;
 import com.beanthere.utils.Validator;
@@ -49,7 +50,9 @@ public class LoginActivity extends BaseActivity {
 
         String email = ((TextView) findViewById(R.id.editTextLoginEmail)).getText().toString().trim();
 
-        if (Validator.isComplete(email)) {
+        if (email.isEmpty()) {
+            showNoticeDialog(this, "", getString(R.string.error_title), "Please fill in email", "");
+        } else {
             new ForgotPassword().execute(email);
         }
     }
@@ -113,8 +116,8 @@ public class LoginActivity extends BaseActivity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
-                // TODO handleRequestFail
+            if (response == null || response.isEmpty()) {
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 
                 Gson gson = new Gson();
@@ -149,28 +152,18 @@ public class LoginActivity extends BaseActivity {
             Log.e("ForgotPassword", "doInBackground");
 
             HttpHandler req = new HttpHandler();
-            String response = req.forgotpassword(params[0]);
+            String response = req.forgotpassword(SharedPreferencesManager.getAPIKey(LoginActivity.this), params[0]);
 
             return response;
 
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onCancelled(String s) {
-            super.onCancelled(s);
-        }
-
-        @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            if (response == null && response.isEmpty()) {
-                // TODO handleRequestFail
+            if (response == null || response.isEmpty()) {
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 
                 JSONObject obj = null;

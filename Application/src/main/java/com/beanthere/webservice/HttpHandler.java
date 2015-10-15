@@ -3,6 +3,7 @@ package com.beanthere.webservice;
 import android.util.Log;
 
 import com.beanthere.objects.AppObject;
+import com.beanthere.utils.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public class HttpHandler {
 
-    public String register(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
+    public String register(String apikey, String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("email", email);
@@ -34,7 +35,7 @@ public class HttpHandler {
 //        map.put("fb_user_id", fb_user_id);
 //        map.put("fb_auth_token", fb_auth_token);
         Log.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob);
-        return httpPost(map, "register", "");
+        return httpPost(map, "register", apikey);
     }
 
     public String login(String email, String password, int type) {
@@ -48,12 +49,12 @@ public class HttpHandler {
         return httpPost(map, "login", "");
     }
 
-    public String forgotpassword(String email) {
+    public String forgotpassword(String apikey, String email) {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("email", email);
 
-        return httpPost(map, "forgotpassword", "");
+        return httpPost(map, "user/forgotpassword", apikey);
     }
 
     public String getMerchantList(String apikey, Double latitude, Double longitude) {
@@ -158,14 +159,14 @@ public class HttpHandler {
 
     private String httpPost(Map<String, Object> map, String action, String apikey) {
 
+        String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
+
         StringBuilder stringBuilder = new StringBuilder();
 
+        HttpURLConnection conn = null;
+
         try {
-            String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
-
             Log.e("httpPost", requestURL);
-
-//            printMap(map);
 
             URL url = new URL(requestURL);
 
@@ -178,17 +179,20 @@ public class HttpHandler {
             }
             byte[] postDataBytes = postData.toString().getBytes("UTF-8");
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+
             if (!apikey.isEmpty()) {
                 conn.setRequestProperty("Authorization", apikey);
             }
+
             conn.setDoOutput(true);
             conn.getOutputStream().write(postDataBytes);
+            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(30000);
 
-            Log.e("httpPost", "writing response");
             InputStream in = conn.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String line;
@@ -196,6 +200,7 @@ public class HttpHandler {
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line);
             }
+
             Log.e("httpPost", stringBuilder.toString());
 
         } catch (MalformedURLException e) {
@@ -204,6 +209,10 @@ public class HttpHandler {
             Log.e("@HttpHandler:httpPost", "UnsupportedEncodingException: " + e.getMessage());
         } catch (IOException e) {
             Log.e("@HttpHandler:httpPost", "IOException: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
 
         return stringBuilder.toString();
@@ -213,27 +222,31 @@ public class HttpHandler {
 
         String response = null;
 
+        String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
+
+        HttpURLConnection conn = null;
+
         try {
-            String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
 
             URL obj = new URL(requestURL);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn = (HttpURLConnection) obj.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(30000);
+            conn.setRequestProperty("Authorization", apikey);
 
-            Log.e("httpGet requestURL", requestURL);
-
-            Log.e("httpGet apikey", apikey);
+            Logger.e("httpGet requestURL", requestURL);
+            Logger.e("httpGet apikey", apikey);
 
 //            String basicAuth = "Basic " + new String(Base64.encode(apikey.getBytes(), 0));
-            con.setRequestProperty ("Authorization", apikey);
 
 
-            int responseCode = con.getResponseCode();
+            int responseCode = conn.getResponseCode();
             Log.e("GET Response Code :: ",  String.valueOf(responseCode));
 
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -253,6 +266,10 @@ public class HttpHandler {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
 
         return response;

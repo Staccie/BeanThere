@@ -50,10 +50,11 @@ public class CafeFilterActivity extends NavDrawerActivity {
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeFilterList);
         mSearchView = (SearchView) view.findViewById(R.id.searchView);
+        mSearchView.setIconifiedByDefault(false);
 
-        int id = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        TextView textView = (TextView) mSearchView.findViewById(id);
-        textView.setTextColor(Color.BLACK);
+//        int id = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+//        TextView textView = (TextView) mSearchView.findViewById(id);
+//        textView.setTextColor(Color.BLACK);
 
         mSearchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
@@ -130,8 +131,8 @@ public class CafeFilterActivity extends NavDrawerActivity {
             mProgressBar.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
 
-            if (response == null && response.isEmpty()) {
-                showNoticeDialog("", getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
+            if (response == null || response.isEmpty()) {
+                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
             } else {
 
                 Gson gson = new Gson();

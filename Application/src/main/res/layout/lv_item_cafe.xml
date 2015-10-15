@@ -10,7 +10,8 @@
         android:layout_height="180dp"
         android:id="@+id/imageViewCafe"
         android:layout_gravity="center"
-        android:src="@drawable/placeholder"/>
+        android:src="@drawable/placeholder"
+        android:scaleType="fitXY"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

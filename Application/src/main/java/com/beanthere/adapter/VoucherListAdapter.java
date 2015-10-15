@@ -67,14 +67,14 @@ public class VoucherListAdapter extends BaseAdapter {
 
         Voucher voucher = mList.get(position);
 
-        Log.e("view holder " + position, voucher.name);
+//        Log.e("view holder " + position, voucher.name);
         final String voucherId = voucher.voucher_id;
         final int pos = position;
 
         if (voucher.images_1 == null || voucher.images_1.trim().isEmpty()) {
             holder.ivVoucher.setImageResource(R.drawable.placeholder);
         } else {
-            new ImageViewDownloader(holder.ivVoucher).execute(voucher.images_1);
+            new ImageViewDownloader(holder.ivVoucher, false).execute(voucher.images_1);
         }
 
         holder.tvName.setText(voucher.name);

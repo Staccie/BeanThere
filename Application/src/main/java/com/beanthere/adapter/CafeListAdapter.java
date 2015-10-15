@@ -70,7 +70,7 @@ public class CafeListAdapter extends BaseAdapter {
         if (cafe.images_1 == null || cafe.images_1.trim().isEmpty()) {
             holder.ivCafe.setImageResource(R.drawable.placeholder);
         } else {
-            new ImageViewDownloader(holder.ivCafe).execute(cafe.images_1);
+            new ImageViewDownloader(holder.ivCafe, false).execute(cafe.images_1);
         }
         holder.tvName.setText(cafe.name);
 
