@@ -17,10 +17,12 @@
 package com.beanthere.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Criteria;
@@ -30,11 +32,13 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +51,7 @@ import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.BeanDialogInterface.OnInputDialogDismissListener;
 import com.beanthere.dialoghelper.ConfirmationDialog;
+import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
 import com.beanthere.objects.GeneralResponse;
@@ -54,13 +59,14 @@ import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
 
-public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.OnItemClickListener,
+public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnItemClickListener,
         LocationListener, BeanLocationListener.LocationReceiver,
         OnInputDialogDismissListener, BeanDialogInterface.OnPositiveClickListener {
 
     private static LocationManager mCoreLocationManager;
     private static Location mCoreLocation;
 
+    private Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
     private RecyclerView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -86,10 +92,6 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 
-        for (int i = 0; i < mNavDrawerIcon.length; i++) {
-            Log.e("mNavDrawerIcon", "[" + i + "] = " + mNavDrawerIcon[i]);
-        }
-
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // improve performance by indicating the list if fixed size.
@@ -100,7 +102,14 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mDrawerList.setLayoutManager(layoutManager);
 
-        mDrawerList.setAdapter(new NavDrawerAdapter(mNavDrawerTitle, mNavDrawerIcon, this));
+        String fbname = SharedPreferencesManager.getString(this, "fbname");
+
+        mDrawerList.setAdapter(new NavDrawerAdapter(this, mNavDrawerTitle, mNavDrawerIcon, fbname, this));
+
+        // TODO change to Toolbar
+        /*toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        setActionBar(toolbar);*/
+
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -110,7 +119,7 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.ic_drawer,  /* nav drawer image to replace 'Up' caret */
+                toolbar,
                 R.string.drawer_open,  /* "open drawer" description for accessibility */
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
@@ -137,6 +146,13 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 //        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
+//        android.app.ActionBar actionBar = getActionBar();
+//        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+//        actionBar.setDisplayShowHomeEnabled(false);
+//        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setDisplayShowTitleEnabled(false);
+//        actionBar.setCustomView(R.layout.actionbar);
+
         return true;
     }
 
@@ -208,7 +224,7 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
         }
 
         // update selected item title, then close the drawer
-        setTitle(mNavDrawerTitle[position]);
+//        setTitle(mNavDrawerTitle[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
@@ -220,6 +236,9 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
     }
 
     protected void logout() {
+        SharedPreferences settings = getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
+        settings.edit().clear().commit();
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -300,6 +319,12 @@ public class NavDrawerActivity extends BaseActivity implements NavDrawerAdapter.
             }
             mLocationManager.requestSingleUpdate(provider, mLocationListener, null);
         }
+    }
+
+    protected void showNoticeDialog(String tag, String title, String message, String neutralButton) {
+        FragmentManager fm = getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
+        noticeDialog.show(fm, tag);
     }
 
     private void promptEnableGPS() {

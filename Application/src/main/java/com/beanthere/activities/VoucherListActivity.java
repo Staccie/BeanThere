@@ -3,6 +3,7 @@ package com.beanthere.activities;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
     private List<Voucher> mList;
     private VoucherListAdapter mAdapter;
     private ListView mListView;
+    private SwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,14 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.activity_promo_list, null,false);
         frameLayout.addView(view);
+
+        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new LoadVoucherList().execute(SharedPreferencesManager.getAPIKey(VoucherListActivity.this));
+            }
+        });
 
         if (mList == null) {
             mList = new ArrayList<Voucher>();
@@ -72,8 +82,16 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         }
 
         @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+
+            mRefreshLayout.setRefreshing(false);
 
             if (response == null || response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
@@ -98,6 +116,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         if (voucherList == null || voucherList.size() == 0) {
             // TODO show no vouchers
         } else {
+            mList.clear();
             mList.addAll(voucherList);
             ((VoucherListAdapter) mListView.getAdapter()).notifyDataSetChanged();
         }

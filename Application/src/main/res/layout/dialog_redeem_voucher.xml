@@ -41,7 +41,7 @@
             android:inputType="number"
             android:maxLength="4"
             android:background="@drawable/rectangle"
-            android:text="0000"
+            android:hint="0000"
             android:padding="15dp">
 
             <requestFocus />

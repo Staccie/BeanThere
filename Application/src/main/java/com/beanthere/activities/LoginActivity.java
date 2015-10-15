@@ -20,12 +20,12 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_new);
+        setContentView(R.layout.activity_login);
 
         // TODO Remove test data
         ((TextView) findViewById(R.id.editTextLoginEmail)).setText("ice@gmail.com");
@@ -63,7 +63,7 @@ public class LoginActivity extends Activity {
         editor.putString("email", user.email);
         editor.putString("first_name", user.first_name);
         editor.putString("last_name", user.last_name);
-        editor.putString("dob", user.dob);
+        editor.putString("dob", user.dob.substring(0, 10));
         editor.putString("fb_user_id", user.fb_user_id);
         editor.putString("fb_auth_token", user.fb_auth_token);
         editor.putInt("logintype", 1);

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.beanthere.R;
@@ -48,9 +50,13 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
     private Cafe mCafe;
 
     private String mCafeId;
+    private String mCafeName;
     private boolean isLoading;
     private int mCurrentView;
 //    private String mExtra;
+
+    private LinearLayout llCafeDetails;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +65,12 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         Log.e("onCreate", "CafeActivity");
         setContentView(R.layout.activity_cafe);
 
+        llCafeDetails = (LinearLayout) findViewById(R.id.llCafeDetails);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBarCafeDetails);
+
         mAdapter = new CafeMenuAdapter(this, mCategories, mCafeMenuList);
         mMenuListView = (ExpandableListView) findViewById(R.id.listViewCafeMenu);
         mMenuListView.setAdapter(mAdapter);
-
-//        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        mView = layoutInflater.inflate(R.layout.activity_cafe, null, false);
-//        frameLayout.addView(mView);
 
         mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -85,6 +89,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
             isLoading = false;
             mCafeId = extras.getString("cafeId", "");
+            mCafeName = extras.getString("cafeName", "Cafe");
 
             Log.e("saved is null", "cafeid=" + mCafeId + "; isLoading: " + String.valueOf(isLoading));
 
@@ -93,15 +98,19 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
             new GetCafeDetailsTask().execute(SharedPreferencesManager.getAPIKey(this));
         } else {
             mCafeId = savedInstanceState.getString("mCafeId", "0");
+            mCafeName = savedInstanceState.getString("mCafeName", "Cafe");
             mCurrentView = savedInstanceState.getInt("cafeId", 0);
             new GetCafeDetailsTask().execute(SharedPreferencesManager.getAPIKey(this));
         }
+
+        setTitle("");
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("mCafeId", mCafeId);
+        outState.putString("mCafeName", mCafeName);
         outState.putBoolean("isLoading", isLoading);
         super.onSaveInstanceState(outState);
     }
@@ -110,6 +119,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mCafeId = savedInstanceState.getString("mCafeId", "");
+        mCafeName = savedInstanceState.getString("mCafeName", "Cafe");
         isLoading = savedInstanceState.getBoolean("isLoading", false);
     }
 
@@ -119,6 +129,9 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         protected void onPreExecute() {
             super.onPreExecute();
             Log.e("GetCafeDetailsTask", "onPreExecute");
+
+            mProgressBar.setVisibility(View.VISIBLE);
+            llCafeDetails.setVisibility(View.GONE);
         }
 
         @Override
@@ -134,10 +147,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                     //  Dialog cannot get cafe detail
                     return false;
                 } else {
-                    Log.e("fdfsdfs", "fdsfdsfds");
-
                     return loadCafeDetails(response);
-
                 }
 
             }
@@ -156,6 +166,8 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
             Log.e("GetCafeDetailsTask", String.valueOf(success));
             isLoading = false;
 
+            mProgressBar.setVisibility(View.GONE);
+            llCafeDetails.setVisibility(View.VISIBLE);
         }
     }
 

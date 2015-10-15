@@ -2,6 +2,7 @@ package com.beanthere.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.beanthere.R;
 import com.beanthere.adapter.CafeFilterAdapter;
@@ -32,6 +36,8 @@ public class CafeFilterActivity extends NavDrawerActivity {
     private List<Cafe> mList;
     private CafeFilterAdapter mAdapter;
     private ListView mListView;
+    private ProgressBar mProgressBar;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,28 @@ public class CafeFilterActivity extends NavDrawerActivity {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.activity_cafe_filter, null, false);
         frameLayout.addView(view);
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeFilterList);
+        mSearchView = (SearchView) view.findViewById(R.id.searchView);
+
+        int id = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = (TextView) mSearchView.findViewById(id);
+        textView.setTextColor(Color.BLACK);
+
+        mSearchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange( String newText ) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!query.isEmpty()) {
+                    new LoadCafeList().execute(query, SharedPreferencesManager.getAPIKey(CafeFilterActivity.this));
+                }
+                return true;
+            }
+        });
 
         if (mList == null) {
             mList = new ArrayList<Cafe>();
@@ -59,8 +87,7 @@ public class CafeFilterActivity extends NavDrawerActivity {
             }
         });
 
-        // TODO get text
-        new LoadCafeList().execute("", SharedPreferencesManager.getAPIKey(this));
+//        new LoadCafeList().execute("", SharedPreferencesManager.getAPIKey(this));
     }
 
     private void updateCafeList(List<Cafe> cafeList) {
@@ -78,6 +105,13 @@ public class CafeFilterActivity extends NavDrawerActivity {
     class LoadCafeList extends AsyncTask<String, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgressBar.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        }
+
+        @Override
         protected String doInBackground(String... params) {
 
             Log.e("Login", "doInBackground");
@@ -92,6 +126,9 @@ public class CafeFilterActivity extends NavDrawerActivity {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+
+            mProgressBar.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
 
             if (response == null && response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.login_failed), getString(R.string.invalid_server_response), "");

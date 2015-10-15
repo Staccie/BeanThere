@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/tvCafeName"
-    android:padding="@dimen/activity_horizontal_margin"
-    android:background="@android:color/white"
-    android:textAppearance="?textAppearanceListItem">
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvCafeName"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:background="@android:color/white"
+        style="@style/MediumTextBlack">
 
-</TextView>
+    </TextView>
+</LinearLayout>

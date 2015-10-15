@@ -1,7 +1,7 @@
 package com.beanthere.utils;
 
 /**
- * Created by staccie on 9/21/15.
+ * Created by staccie
  */
 public class CommonUtils {
 

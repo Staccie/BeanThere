@@ -28,7 +28,7 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_register_new);
 
         // TODO remove testing code
         ((EditText) findViewById(R.id.registerEmail)).setText("ice@gmail.com");

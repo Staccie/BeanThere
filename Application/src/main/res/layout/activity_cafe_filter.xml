@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -9,15 +10,27 @@
         android:layout_height="wrap_content">
 
         <SearchView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/searchView" />
+            android:id="@+id/searchView"
+            android:background="@android:color/white"
+            android:layout_gravity="end" />
     </LinearLayout>
 
-    <ListView
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBarCafeFilterList"
+        android:visibility="gone"/>
+
+    <ListView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listViewCafeFilters"
         android:entries="@layout/lv_item_cafe_filter"
-        android:layout_weight="1" />
+        android:background="@android:color/white"
+        android:layout_weight="1"
+        android:dividerHeight="1dp"
+        android:divider="#999999"/>
 </LinearLayout>

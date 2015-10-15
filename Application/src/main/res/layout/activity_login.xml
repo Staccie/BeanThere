@@ -36,11 +36,9 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                style="@style/MediumText"
                 android:id="@+id/editTextLoginEmail"
-                android:layout_weight="1"
-                android:text="fd" />
+                android:inputType="textEmailAddress"
+                style="@style/BeanEditText" />
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="0.5dp" android:paddingLeft="5dp" android:paddingRight="5dp" android:background="@android:color/darker_gray"/>
@@ -66,10 +64,9 @@
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                style="@style/MediumText"
                 android:id="@+id/editTextLoginPassword"
-                android:layout_weight="1" />
+                android:inputType="textPassword"
+                style="@style/BeanEditText" />
 
         </LinearLayout>
 
@@ -77,8 +74,6 @@
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/activity_vertical_margin"
         android:layout_alignParentRight="true"
         android:layout_below="@id/llLoginForm"
@@ -89,13 +84,12 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/btn_login"
+        android:text="@string/get_started"
         android:id="@+id/button"
         android:layout_gravity="bottom"
         android:background="#77000000"
         android:onClick="onClickLogin"
-        style="@style/MediumText"
+        style="@style/LargeBoldText"
         android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

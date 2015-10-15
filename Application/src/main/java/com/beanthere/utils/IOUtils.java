@@ -117,27 +117,35 @@ public class IOUtils {
 
 	public static void copyInputStreamToFile( Context context, boolean isCache, InputStream in, String fileName ) {
 
-			File file;
+		File file;
 		if ( fileName.isEmpty() ) {
 			fileName = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 		}
 
 		if (isCache) {
-			file = new File(context.getExternalFilesDir(null), fileName);
-		} else {
 			file = new File(context.getCacheDir(), fileName);
+		} else {
+			file = new File(context.getExternalFilesDir(null), "");
+
+			if (!file.exists()) {
+				file.mkdir();
+			}
+
+			file = new File(context.getExternalFilesDir(null), fileName);
+			Log.e("profilepicfile", "" + file.getAbsolutePath());
 		}
 
 		try {
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
+			OutputStream os = new FileOutputStream(file);
+			byte[] buffer = new byte[1024];
 			int len;
 
-			while((len=in.read(buf))>0) {
-				out.write(buf,0,len);
+			while ((len = in.read(buffer)) != -1) {
+				Log.e("write pf", "fff");
+				os.write(buffer, 0, len);
 			}
 
-			out.close();
+			os.close();
 			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -51,10 +51,10 @@ public class CafeFilterAdapter extends BaseAdapter {
 
         if (container == null) {
 
-            container = LayoutInflater.from(mContext).inflate(R.layout.lv_item_cafe, null);
+            container = LayoutInflater.from(mContext).inflate(R.layout.lv_item_cafe_filter, null);
 
             holder = new ViewHolder();
-            holder.tvName = (TextView) container.findViewById(R.id.textViewCafeName);
+            holder.tvName = (TextView) container.findViewById(R.id.tvCafeName);
             container.setTag(holder);
 
         } else {

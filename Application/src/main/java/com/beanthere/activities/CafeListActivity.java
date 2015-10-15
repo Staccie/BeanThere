@@ -20,12 +20,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.beanthere.R;
 import com.beanthere.adapter.CafeListAdapter;
@@ -44,6 +46,8 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     private List<Cafe> mList;
     private CafeListAdapter mAdapter;
     private ListView mListView;
+    private ProgressBar mProgressBar;
+    private SwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,16 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
         frameLayout.addView(view);
+
+        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new LoadCafeList().execute(SharedPreferencesManager.getAPIKey(CafeListActivity.this));
+            }
+        });
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeList);
 
         if (mList == null) {
             mList = new ArrayList<Cafe>();
@@ -68,7 +82,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
             public void onItemClick(AdapterView<?> listView, View itemView, int position, long id) {
 
                 Cafe selectedCafe = (Cafe) listView.getItemAtPosition(position);
-                startCafeActivity(selectedCafe.id);
+                startCafeActivity(selectedCafe.id, selectedCafe.name);
             }
         });
 
@@ -95,6 +109,13 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     class LoadCafeList extends AsyncTask<String, Void, String> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+//            mProgressBar.setVisibility(View.VISIBLE);
+            mListView.setVisibility(View.GONE);
+        }
+
+        @Override
         protected String doInBackground(String... params) {
 
             Log.e("Login", "doInBackground");
@@ -107,8 +128,18 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
         }
 
         @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mRefreshLayout.setRefreshing(false);
+        }
+
+        @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+
+            mRefreshLayout.setRefreshing(false);
+//            mProgressBar.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
 
             if (response == null && response.isEmpty()) {
                 showNoticeDialog("", getString(R.string.login_failed), getString(R.string.invalid_server_response), "");
@@ -129,14 +160,16 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     }
 
     private void updateCafeList(List<Cafe> cafeList) {
+        mList.clear();
         mList.addAll(cafeList);
         ((CafeListAdapter) mListView.getAdapter()).notifyDataSetChanged();
     }
 
-    private void startCafeActivity(int id) {
+    private void startCafeActivity(int id, String name) {
         Log.e("startCafeActivity", "id: " + String.valueOf(id));
         Intent intent = new Intent(this, CafeActivity.class);
         intent.putExtra("cafeId", String.valueOf(id));
+        intent.putExtra("cafeName", name);
         startActivityForResult(intent, 0);
     }
 }

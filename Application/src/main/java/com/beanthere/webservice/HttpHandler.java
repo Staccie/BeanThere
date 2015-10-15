@@ -194,7 +194,6 @@ public class HttpHandler {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                Log.e("append", "line");
                 stringBuilder.append(line);
             }
             Log.e("httpPost", stringBuilder.toString());

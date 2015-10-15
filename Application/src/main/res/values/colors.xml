@@ -4,5 +4,9 @@
     <color name="black_87">#DD000000</color>
     <color name="black_54">#89000000</color>
     <color name="app_background">#FAFBFC</color>
+    <color name="android:colorPrimaryDark">#FFFFFF</color>
+    <color name="android:colorPrimary">#FFFFFF</color>
+    <color name="android:textColorPrimary">#000000</color>
+    <color name="android:windowBackground">#FFFFFF</color>
 
 </resources>

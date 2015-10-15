@@ -37,7 +37,7 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_profile, null,false);
+        View view = layoutInflater.inflate(R.layout.activity_profile_new, null,false);
         frameLayout.addView(view);
 
         // TODO Populate user details
@@ -128,16 +128,6 @@ public class ProfileActivity extends NavDrawerActivity implements OnDataSetListe
 
             return response;
 
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onCancelled(String s) {
-            super.onCancelled(s);
         }
 
         @Override

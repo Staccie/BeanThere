@@ -7,7 +7,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:id="@+id/imageViewCafe"
         android:layout_gravity="center"
         android:src="@drawable/placeholder"/>
@@ -16,7 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#99000000">
+        android:background="#99000000"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
     <TextView
         android:layout_width="wrap_content"

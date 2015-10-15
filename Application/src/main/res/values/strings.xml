@@ -27,10 +27,10 @@
     <string name="action_settings">Settings</string>
 
     <!--ACTIVITY TITLES-->
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_cafe_list">CafeListActivity</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_cafe_list">Cafe List</string>
     <string name="title_activity_cafe">Cafe</string>
-    <string name="title_activity_promotion_list">Promotion List</string>
+    <string name="title_activity_promotion_list">Wallet</string>
 
     <!-- LANDING PAGE -->
     <string name="btn_login">Login</string>
@@ -45,7 +45,7 @@
     <string name="forgotPassword"><u>Forgot password</u></string>
     <string name="confirm_password">Confirm Password</string>
     <string name="dob">Date of Birth</string>
-    <string name="btn_register">Sign up</string>
+    <string name="btn_register">SIGN UP</string>
 
      <!-- CAFE PAGE -->
     <string name="btn_about">ABOUT</string>
@@ -72,16 +72,18 @@
     <!--GENERAL-->
     <string name="no_info">No info</string>
     <string name="required_field">* Required field</string>
-    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_profile">Settings</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="redeeem_promo_message">Please allow the merchant to enter the following 4 digit validation code.</string>
     <string name="redeeem_promo_title">Redeem Now</string>
     <string name="error_title">Error</string>
-    <string name="promo_expire">Expires in %1$s! days</string>
+    <string name="promo_expire">Expires in %1$s days</string>
     <string name="redeem_now">Redeem Now</string>
     <string name="get_started">Get Started</string>
     <string name="btn_update_profile">Update</string>
+    <string name="title_activity_signup">Sign Up</string>
+    <string name="title_activity_cafe_filter">Cafe Filter</string>
 
 
 </resources>

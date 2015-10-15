@@ -54,7 +54,7 @@ public class NoticeDialogFragment extends DialogFragment {
 		builder.setNeutralButton(neutralButton, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
-				if (whichButton == REGISTER_SUCCESS) {
+				if (!getTag().isEmpty()) {
 					((BeanDialogInterface.OnPositiveClickListener) getActivity()).onPositiveClick(getTag(), whichButton);
 				}
 			}

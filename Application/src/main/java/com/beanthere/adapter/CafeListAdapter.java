@@ -65,7 +65,7 @@ public class CafeListAdapter extends BaseAdapter {
 
         Cafe cafe = mList.get(position);
 
-        Log.e("view holder " + position, cafe.name);
+//        Log.e("view holder " + position, cafe.name);
 
         if (cafe.images_1 == null || cafe.images_1.trim().isEmpty()) {
             holder.ivCafe.setImageResource(R.drawable.placeholder);
@@ -78,7 +78,7 @@ public class CafeListAdapter extends BaseAdapter {
         distance = distance == "" ? "" : distance + "KM";
 
         holder.tvDistance.setText(distance);
-        holder.tvAddress1.setText(cafe.address_1 + " " + cafe.address_2);
+        holder.tvAddress1.setText((cafe.address_1 == null ? "" : (cafe.address_1 + " ")) + (cafe.address_2 == null ? "" : cafe.address_2));
 //        holder.tvAddress2.setText(cafe.address_2);
 
         return container;

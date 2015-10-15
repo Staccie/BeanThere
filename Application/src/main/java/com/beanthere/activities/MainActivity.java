@@ -18,15 +18,26 @@
 package com.beanthere.activities;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.data.SharedPreferencesManager;
+import com.beanthere.dialoghelper.NoticeDialogFragment;
+import com.beanthere.objects.AppObject;
+import com.beanthere.objects.User;
 import com.beanthere.utils.IOUtils;
+import com.beanthere.webservice.HttpHandler;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -36,14 +47,17 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 
 /**
@@ -52,6 +66,7 @@ import java.util.Arrays;
 public class MainActivity extends Activity {
 
     CallbackManager callbackManager;
+    private ImageView ivTest;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +74,10 @@ public class MainActivity extends Activity {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_main);
+        ivTest = (ImageView) findViewById(R.id.imageViewBeanLogo);
 
         LoginButton fbLoginButton = (LoginButton) findViewById(R.id.login_button);
-        fbLoginButton.setReadPermissions(Arrays.asList("basic_info","email"));
-
+        fbLoginButton.setReadPermissions(Arrays.asList("basic_info", "email"));
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -100,34 +115,165 @@ public class MainActivity extends Activity {
 
 //        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email"));
 
+        autoLogin();
+
+
+    }
+
+    private void autoLogin() {
+
+        int loginType = SharedPreferencesManager.getInt(this, "logintype");
+
+        if (loginType == 1) {
+
+            String email = SharedPreferencesManager.getString(this, "email");
+            String pw = SharedPreferencesManager.getString(this, "p");
+
+            if (!email.isEmpty() && !pw.isEmpty()) {
+                new Login().execute(email, pw);
+            }
+        }
 
     }
 
     private void registerLoginUser(JSONObject json) {
-        try {
 
-            String jsonresult = String.valueOf(json);
-            Log.e("JSON Result", jsonresult);
+        String jsonresult = String.valueOf(json);
+        Log.e("JSON Result", jsonresult);
 
-            String email = json.getString("email");
-            String id = json.getString("id");
-            String firstName = json.getString("first_name");
-            String lastName = json.getString("last_name");
+        String email = json.optString("email");
+        String id = json.optString("id");
+        String firstName = json.optString("first_name");
+        String lastName = json.optString("last_name");
 
-            URL image_value = new URL("http://graph.facebook.com/"+id+"/picture" );
-            InputStream is = image_value.openConnection().getInputStream();
-            Bitmap bm = BitmapFactory.decodeStream(image_value.openConnection().getInputStream());
+        SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("fbname", firstName);
+        editor.commit();
 
-            IOUtils.copyInputStreamToFile(MainActivity.this, false, is, "fbprofilepic");
+        new DownloadProfilePic().execute(id);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    private void processLogin(User user) {
+
+        SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("u_id", user.id);
+        editor.putString("apikey", user.api_key);
+        editor.putInt("logintype", 1);
+        editor.putBoolean("checkLocation", true);
+
+        editor.commit();
+
+        Intent intent = new Intent(this, CafeListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    // TODO merge with LoginActivity
+    class Login extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
+        @Override
+        protected String doInBackground(String... params) {
+
+            Log.e("Login", "doInBackground");
+
+            HttpHandler req = new HttpHandler();
+            String response = req.login(params[0], params[1], 1);
+
+            return response;
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+
+            if (response == null && response.isEmpty()) {
+                // TODO handleRequestFail
+            } else {
+
+                Gson gson = new Gson();
+                User user;
+
+                user = gson.fromJson(response, User.class);
+
+                if (user.error) {
+                    FragmentManager fm = getFragmentManager();
+                    NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), user.error_message, "");
+                    noticeDialog.show(fm, "");
+                } else {
+                    processLogin(user);
+                }
+
+
+
+            }
+        }
+    }
+
+    class DownloadProfilePic extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+
+            Bitmap bm = null;
+
+            if (!params[0].isEmpty()) {
+
+                URL image_value;
+
+                try {
+                    image_value = new URL("http://graph.facebook.com/" + params[0] + "/picture?type=large");
+                    Log.e("image_value", image_value.toString());
+                    bm = BitmapFactory.decodeStream(image_value.openConnection().getInputStream());
+                    Log.e("bm", "" + (bm == null));
+
+//                    URL aURL = new URL("http://graph.facebook.com/"+params[0]+"/picture?type=large");
+//                    URLConnection conn = aURL.openConnection();
+//                    conn.setUseCaches(true);
+//                    conn.connect();
+//                    InputStream is = conn.getInputStream();
+//                    BufferedInputStream bis = new BufferedInputStream(is);
+//                    bm = BitmapFactory.decodeStream(bis);
+//                    bis.close();
+//                    is.close();
+
+
+//                    bm = BitmapFactory.decodeStream(is);
+//                    IOUtils.copyInputStreamToFile(MainActivity.this, false, is, "fbprofilepic");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return bm;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bm) {
+            super.onPostExecute(bm);
+//            startActivity(new Intent(MainActivity.this, CafeListActivity.class));
+            ivTest.setImageBitmap(bm);
+        }
     }
 
     public void onClickLoginEmail(View view) {
