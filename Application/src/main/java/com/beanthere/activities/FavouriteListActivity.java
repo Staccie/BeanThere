@@ -36,7 +36,6 @@ import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DialogHelper;
 import com.beanthere.objects.Cafe;
 import com.beanthere.objects.GeneralResponse;
-import com.beanthere.utils.CommonUtils;
 import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
@@ -44,9 +43,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CafeListActivity extends NavDrawerActivity implements BeanDialogInterface.OnNegativeClickListener, BeanDialogInterface.OnPositiveClickListener {
+public class FavouriteListActivity extends NavDrawerActivity implements BeanDialogInterface.OnNegativeClickListener, BeanDialogInterface.OnPositiveClickListener {
 
-    private View mParentView;
     private List<Cafe> mList;
     private CafeListAdapter mAdapter;
     private ListView mListView;
@@ -59,25 +57,25 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mParentView = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
-        frameLayout.addView(mParentView);
+        View view = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
+        frameLayout.addView(view);
 
-        mRefreshLayout = (SwipeRefreshLayout) mParentView.findViewById(R.id.swipeContainer);
+        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                runLoadCafeListTask(false);
+                new LoadCafeListTask(false).execute(SharedPreferencesManager.getAPIKey(FavouriteListActivity.this));
             }
         });
 
-        mProgressBar = (ProgressBar) mParentView.findViewById(R.id.progressBarCafeList);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeList);
 
         if (mList == null) {
             mList = new ArrayList<>();
         }
 
         mAdapter = new CafeListAdapter(this, mList);
-        mListView = (ListView) mParentView.findViewById(R.id.listViewCafe);
+        mListView = (ListView) view.findViewById(R.id.listViewCafe);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -90,23 +88,12 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
             }
         });
 
-        checkLocationService();
-
-        runLoadCafeListTask(false);
+        new LoadCafeListTask(true).execute(SharedPreferencesManager.getAPIKey(this));
 
 //        mWebServiceCallback = new WebServiceLoaderCallback();
 //        mDBCallback = new DBLoaderCallback();
 //
 //        if (!isLoading) refresh();
-    }
-
-    private void runLoadCafeListTask(boolean isInitial) {
-        if (CommonUtils.isConnected(CafeListActivity.this)) {
-            mParentView.findViewById(R.id.llNoInternet).setVisibility(View.GONE);
-            new LoadCafeListTask(isInitial).execute(SharedPreferencesManager.getAPIKey(this));
-        } else {
-            mParentView.findViewById(R.id.llNoInternet).setVisibility(View.VISIBLE);
-        }
     }
 
     private class LoadCafeListTask extends AsyncTask<String, Void, String> {
@@ -128,8 +115,8 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
         @Override
         protected String doInBackground(String... params) {
-            Logger.e("@CafeListActivity.LoadCafeListTask", "doInBackground");
-            return new HttpHandler().getMerchantList(params[0], mLatitude, mLongitude);
+            Logger.e("@FavouriteLisActiivty.LoadCafeListTask", "doInBackground");
+            return new HttpHandler().getFavouriteList(params[0]);
         }
 
         @Override
@@ -151,14 +138,15 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
             if (!isCancelled() && !isFinishing()) {
                 if (response == null || response.isEmpty()) {
-                    DialogHelper.showInvalidServerResponse(CafeListActivity.this);
+                    DialogHelper.showInvalidServerResponse(FavouriteListActivity.this);
                 } else {
 
                     Gson gson = new Gson();
                     GeneralResponse genResponse = gson.fromJson(response, GeneralResponse.class);
 
                     if (genResponse.error) {
-                        DialogHelper.showErrorDialog(CafeListActivity.this, genResponse.error_message);
+                        DialogHelper.showErrorDialog(FavouriteListActivity.this, genResponse.error_message);
+//                        showNoticeDialog("", "", genResponse.error_message, "");
                     } else {
                         updateCafeList(genResponse.cafeList);
                     }
@@ -174,7 +162,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     }
 
     private void startCafeActivity(int id, String name) {
-        Log.e("startCafeActivity", "id: " + String.valueOf(id));
+        Logger.e("startCafeActivity", "id: " + String.valueOf(id));
         Intent intent = new Intent(this, CafeActivity.class);
         intent.putExtra("cafeId", String.valueOf(id));
         intent.putExtra("cafeName", name);

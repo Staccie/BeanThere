@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -29,25 +30,18 @@ public class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        android.app.ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setCustomView(R.layout.actionbar);
     }
 
     protected void showNoticeDialog(String tag, String title, String message, String neutralButton) {
         FragmentManager fm = getFragmentManager();
         NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
         noticeDialog.show(fm, tag);
-    }
-
-    // TODO use this instead
-    protected void showNoticeDialog(Activity activity, String tag, String title, String message, String neutralButton) {
-        FragmentManager fm = activity.getFragmentManager();
-        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
-        noticeDialog.show(fm, tag);
-    }
-
-    // TODO remove all redundant and use this
-    protected void showInvalidResponseDialog(Activity activity) {
-        showNoticeDialog(activity, "", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
     }
 
     @Override

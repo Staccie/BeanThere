@@ -2,26 +2,23 @@ package com.beanthere.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.beanthere.R;
 import com.beanthere.adapter.CafeFilterAdapter;
-import com.beanthere.adapter.CafeListAdapter;
 import com.beanthere.data.SharedPreferencesManager;
+import com.beanthere.dialoghelper.DialogHelper;
 import com.beanthere.objects.Cafe;
 import com.beanthere.objects.GeneralResponse;
+import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
@@ -52,6 +49,7 @@ public class CafeFilterActivity extends NavDrawerActivity {
         mSearchView = (SearchView) view.findViewById(R.id.searchView);
         mSearchView.setIconifiedByDefault(false);
 
+        // Set text color
 //        int id = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
 //        TextView textView = (TextView) mSearchView.findViewById(id);
 //        textView.setTextColor(Color.BLACK);
@@ -72,7 +70,7 @@ public class CafeFilterActivity extends NavDrawerActivity {
         });
 
         if (mList == null) {
-            mList = new ArrayList<Cafe>();
+            mList = new ArrayList<>();
         }
 
         mAdapter = new CafeFilterAdapter(this, mList);
@@ -88,7 +86,6 @@ public class CafeFilterActivity extends NavDrawerActivity {
             }
         });
 
-//        new LoadCafeList().execute("", SharedPreferencesManager.getAPIKey(this));
     }
 
     private void updateCafeList(List<Cafe> cafeList) {
@@ -97,13 +94,13 @@ public class CafeFilterActivity extends NavDrawerActivity {
     }
 
     private void startCafeActivity(int id) {
-        Log.e("startCafeActivity", "id: " + String.valueOf(id));
+        Logger.e("startCafeActivity", "id: " + String.valueOf(id));
         Intent intent = new Intent(this, CafeActivity.class);
         intent.putExtra("cafeId", String.valueOf(id));
         startActivityForResult(intent, 0);
     }
 
-    class LoadCafeList extends AsyncTask<String, Void, String> {
+    private class LoadCafeList extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -114,36 +111,30 @@ public class CafeFilterActivity extends NavDrawerActivity {
 
         @Override
         protected String doInBackground(String... params) {
-
-            Log.e("Login", "doInBackground");
-
-            HttpHandler req = new HttpHandler();
-            String response = req.getCafeFilterList(params[0], mLatitude, mLongitude, params[1]);
-
-            return response;
-
+            Logger.e("CafeFilterActivity.LoadCafeList", "doInBackground");
+            return new HttpHandler().getCafeFilterList(params[0], mLatitude, mLongitude, params[1]);
         }
 
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
-            mProgressBar.setVisibility(View.GONE);
-            mListView.setVisibility(View.VISIBLE);
+            if (!isCancelled() && !isFinishing()) {
+                mProgressBar.setVisibility(View.GONE);
+                mListView.setVisibility(View.VISIBLE);
 
-            if (response == null || response.isEmpty()) {
-                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
-            } else {
-
-                Gson gson = new Gson();
-                GeneralResponse genResponse;
-
-                genResponse = gson.fromJson(response, GeneralResponse.class);
-
-                if (genResponse.error) {
-                    showNoticeDialog("", getString(R.string.login_failed), genResponse.error_message, "");
+                if (response == null || response.isEmpty()) {
+                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
                 } else {
-                    updateCafeList(genResponse.cafeList);
+
+                    Gson gson = new Gson();
+                    GeneralResponse genResponse = gson.fromJson(response, GeneralResponse.class);
+
+                    if (genResponse.error) {
+                        DialogHelper.showErrorDialog(CafeFilterActivity.this, genResponse.error_message);
+                    } else {
+                        updateCafeList(genResponse.cafeList);
+                    }
                 }
             }
         }

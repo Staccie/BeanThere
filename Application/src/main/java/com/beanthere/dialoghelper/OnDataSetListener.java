@@ -6,12 +6,12 @@ package com.beanthere.dialoghelper;
 public interface OnDataSetListener {
 
     /** Listen when data is selected from checkbox, dropdown, radio button */
-    public void onListItemSet(long fieldId, String ids, String values);
+    // void onListItemSet(long fieldId, String ids, String values);
 
-    public void onDateSet(long fieldId, String date);
+    void onDateSet(long fieldId, String date);
 
-    public void onTimeSet(long fieldId, String time);
+    void onTimeSet(long fieldId, String time);
 
-    public void onTemplateChosen(long coreId, String title);
+    // void onTemplateChosen(long coreId, String title);
 
 }

@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -66,6 +65,10 @@ public class HttpHandler {
         }
 
         return httpGet("merchants/listing" + latln, apikey);
+    }
+
+    public String getFavouriteList(String apikey) {
+        return httpGet("merchants/favourites", apikey);
     }
 
     public String getMerchantDetails(String id, String apikey) {
@@ -159,7 +162,7 @@ public class HttpHandler {
 
     private String httpPost(Map<String, Object> map, String action, String apikey) {
 
-        String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
+        String requestURL = (AppObject.IS_DEV ? AppObject.SERVER_DEV_URL : AppObject.SERVER_DEV_URL) + action;
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -222,7 +225,7 @@ public class HttpHandler {
 
         String response = null;
 
-        String requestURL = (AppObject.isDev ? AppObject.url_dev : AppObject.url_dev) + action;
+        String requestURL = (AppObject.IS_DEV ? AppObject.SERVER_DEV_URL : AppObject.SERVER_DEV_URL) + action;
 
         HttpURLConnection conn = null;
 

@@ -50,7 +50,9 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name" android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,29 +61,36 @@
         </activity>
         <activity
             android:name=".activities.NavDrawerActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
         </activity>
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_signup" >
+            android:label="@string/title_activity_signup"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.CafeListActivity"
             android:launchMode="singleTop"
-            android:label="@string/title_activity_cafe_list">
+            android:label="@string/title_activity_cafe_list"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.CafeActivity"
-            android:label="@string/title_activity_cafe" >
+            android:label="@string/title_activity_cafe"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.VoucherListActivity"
             android:launchMode="singleTop"
-            android:label="@string/title_activity_promotion_list" >
+            android:label="@string/title_activity_promotion_list"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -91,12 +100,19 @@
         <activity
             android:name=".activities.ProfileActivity"
             android:launchMode="singleTop"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activities.CafeFilterActivity"
             android:launchMode="singleTop"
-            android:label="@string/title_activity_cafe_filter" >
+            android:label="@string/title_activity_cafe_filter"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activities.FavouriteListActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

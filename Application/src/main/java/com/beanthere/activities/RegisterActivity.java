@@ -1,5 +1,6 @@
 package com.beanthere.activities;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,6 +12,11 @@ import android.widget.TextView;
 
 import com.beanthere.R;
 import com.beanthere.data.SharedPreferencesManager;
+import com.beanthere.dialoghelper.BeanProgressDialog;
+import com.beanthere.dialoghelper.DialogHelper;
+import com.beanthere.dialoghelper.NoticeDialogFragment;
+import com.beanthere.objects.AppObject;
+import com.beanthere.utils.Logger;
 import com.beanthere.utils.Validator;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DatePickerFragment;
@@ -23,7 +29,12 @@ import org.json.JSONObject;
 /**
  * Created by staccie
  */
-public class RegisterActivity extends BaseActivity implements OnDataSetListener, BeanDialogInterface.OnPositiveClickListener {
+public class RegisterActivity extends Activity
+        implements OnDataSetListener,
+        BeanDialogInterface.OnPositiveClickListener,
+        BeanDialogInterface.OnProgressDialogCancelled {
+
+    private RegisterTask mRegisterTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +42,71 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         setContentView(R.layout.activity_register);
 
         // TODO remove testing code
-        ((EditText) findViewById(R.id.registerEmail)).setText("ice@gmail.com");
-        ((EditText) findViewById(R.id.firstName)).setText("ice");
-        ((EditText) findViewById(R.id.lastName)).setText("ice");
-        ((EditText) findViewById(R.id.password)).setText("123456");
-        ((EditText) findViewById(R.id.confirmPassword)).setText("123456");
-        ((TextView) findViewById(R.id.dob)).setText("1980-01-01");
+        if (AppObject.IS_DEV) {
+            ((EditText) findViewById(R.id.registerEmail)).setText("ice@gmail.com");
+            ((EditText) findViewById(R.id.firstName)).setText("ice");
+            ((EditText) findViewById(R.id.lastName)).setText("ice");
+            ((EditText) findViewById(R.id.password)).setText("123456");
+            ((EditText) findViewById(R.id.confirmPassword)).setText("123456");
+            ((TextView) findViewById(R.id.dob)).setText("1980-01-01");
+        }
 
+    }
+
+    private class RegisterTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            DialogHelper.showProgressDialog(RegisterActivity.this, "progressRegisterR", "");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Logger.e("Register", "doInBackground");
+            return new HttpHandler().register(SharedPreferencesManager.getAPIKey(RegisterActivity.this), params[0], params[1], params[2], params[3], params[4], "", "");
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+            // TODO stop httpurlconnection
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+
+            if (!isCancelled() && !isFinishing()) {
+                if (response == null || response.isEmpty()) {
+                    DialogHelper.showInvalidServerResponse(RegisterActivity.this);
+                } else {
+
+                    JSONObject obj;
+
+                    try {
+                        obj = new JSONObject(response);
+                        boolean error = obj.optBoolean("error", true);
+                        String message = obj.optString("message", getString(R.string.unknown_signup_error));
+
+                        if (error) {
+                            DialogHelper.showErrorDialog(RegisterActivity.this, message);
+                        } else {
+                            FragmentManager fm = getFragmentManager();
+                            NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance("'", getString(R.string.success_register), null);
+                            noticeDialog.show(fm, "successregister");
+                        }
+
+                    } catch (JSONException e) {
+                        Logger.e("@RegisterActivity.RegisterTask", e.getMessage());
+                        DialogHelper.showInvalidServerResponse(RegisterActivity.this);
+                    }
+                }
+            }
+        }
     }
 
     public void onClickRegister(View view) {
-        validate();
-    }
-
-    private void validate() {
 
         String email = ((EditText) findViewById(R.id.registerEmail)).getText().toString().trim();
         String firstName = ((EditText) findViewById(R.id.firstName)).getText().toString().trim();
@@ -53,15 +115,15 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         String confirmPassword = ((EditText) findViewById(R.id.confirmPassword)).getText().toString().trim();
         String dob = ((TextView) findViewById(R.id.dob)).getText().toString().trim();
 
-        // TODO add TextWatcher or onchange listener for password fields
-        // TODO do one-by-one checking show tooltip if not match
+        // TODO Validate using Validator.validateRequired() and Validator.clearValidationMessage()
 
         if (!Validator.isComplete(email, firstName, lastName, password, confirmPassword, dob)) {
-            showNoticeDialog("", getString(R.string.error_title), getString(R.string.error_fill_in_all), null);
+            DialogHelper.showErrorDialog(this, getString(R.string.error_fill_in_all));
         } else if (!firstName.equals(lastName)) {
-            showNoticeDialog("", getString(R.string.error_title), "Password not match.", null);
+            DialogHelper.showErrorDialog(this, getString(R.string.password_not_match));
         } else {
-            new Register().execute(email, password, firstName, lastName, dob);
+            mRegisterTask = new RegisterTask();
+            mRegisterTask.execute(email, password, firstName, lastName, dob);
         }
     }
 
@@ -69,11 +131,6 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
         FragmentManager fm = getFragmentManager();
         DatePickerFragment datePickerFragment = DatePickerFragment.newInstance("Date of Birth", "1980-01-01");
         datePickerFragment.show(fm, "datePickerFragment");
-    }
-
-    @Override
-    public void onListItemSet(long fieldId, String ids, String values) {
-
     }
 
     @Override
@@ -87,75 +144,18 @@ public class RegisterActivity extends BaseActivity implements OnDataSetListener,
     }
 
     @Override
-    public void onTemplateChosen(long coreId, String title) {
-
-    }
-
-    @Override
     public void onPositiveClick(String tag, int which) {
-        if (tag.equals("successlogin")) {
+        if (tag.equals("successregister")) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }
 
-    class Register extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            Log.e("Register", "doInBackground");
-
-            HttpHandler req = new HttpHandler();
-            String response = req.register(SharedPreferencesManager.getAPIKey(RegisterActivity.this), params[0], params[1], params[2], params[3], params[4], "", "");
-
-            return response;
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onCancelled(String s) {
-            super.onCancelled(s);
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-
-            if (response == null || response.isEmpty()) {
-                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
-            } else {
-
-                JSONObject obj;
-                boolean error = true;
-                String message = "";
-
-                try {
-                    obj = new JSONObject(response);
-
-                     error = obj.optBoolean("error", true);
-                     message = obj.optString("message", "");
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), null);
-                }
-
-                if (error) {
-                    showNoticeDialog("", getString(R.string.error_title), message, null);
-                } else {
-                    showNoticeDialog("successlogin", "Success", "Account successfully created. Please login to continue.", null);
-                }
+    @Override
+    public void onProgressDialogCancelled(String tag) {
+        if (tag.equals("progressRegisterR")) {
+            if (mRegisterTask != null) {
+                mRegisterTask.cancel(true);
             }
         }
     }

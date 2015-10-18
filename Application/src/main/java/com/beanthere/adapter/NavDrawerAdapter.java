@@ -19,9 +19,7 @@ package com.beanthere.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.utils.DateFormat;
+import com.beanthere.utils.Logger;
 
 import java.io.File;
 
@@ -40,7 +40,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private Context mContext;
     private String mNavTitles[];
     private int mIcons[];
-    private String mFBName;
+    private String mUserName;
+    private String mDateJoin;
 
     private OnItemClickListener mListener;
 
@@ -51,11 +52,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         void onClick(View view, int position);
     }
 
-    public NavDrawerAdapter(Context context, String titles[], int[] icons, String fbname, OnItemClickListener listener){
+    public NavDrawerAdapter(Context context, String titles[], int[] icons, String username, String dateJoin, OnItemClickListener listener){
         mContext = context;
         mNavTitles = titles;
         mIcons = icons;
-        mFBName = fbname;
+        mUserName = username;
+        mDateJoin = dateJoin;
         mListener = listener;
     }
 
@@ -67,7 +69,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         TextView tvName;
         ImageView ivIcon;
         ImageView ivProfile;
-        TextView dateJoin;
+        TextView tvDateJoin;
 
         public ViewHolder(View itemView,int ViewType) {
             super(itemView);
@@ -81,7 +83,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
             }
             else{
                 ivProfile = (ImageView) itemView.findViewById(R.id.imageViewProfile);
-                dateJoin = (TextView) itemView.findViewById(R.id.textViewJoinDate);
+                tvDateJoin = (TextView) itemView.findViewById(R.id.textViewJoinDate);
                 tvName = (TextView) itemView.findViewById(R.id.textViewFBName);
                 type = 0;
             }
@@ -109,11 +111,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
         if(holder.type ==1) {
             holder.tvItem.setText(mNavTitles[position - 1]);
+            Logger.e("onBindViewHolder", "position " + position);
             holder.ivIcon.setImageResource(mIcons[position - 1]);
         }
         else {
             File sd = mContext.getExternalFilesDir(null);
-            Log.e("sd.path", "" + sd.getAbsolutePath());
+            Logger.e("sd.path", "" + sd.getAbsolutePath());
             File image = new File(sd, "fbprofilepic");
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
@@ -124,7 +127,10 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 holder.ivProfile.setImageResource(R.drawable.placeholder_people);
             }
 
-            holder.tvName.setText(mFBName);
+            holder.tvName.setText(mUserName);
+
+            String date = DateFormat.formatDateJoin(mDateJoin);
+            holder.tvDateJoin.setText(String.format(mContext.getString(R.string.date_join), date));
 
         }
 

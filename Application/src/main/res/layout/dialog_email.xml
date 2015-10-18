@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/rectangle_black">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/enter_promo_code_title"-->
+        <!--android:id="@+id/textView9"-->
+        <!--style="@style/LargeBoldText"-->
+        <!--android:layout_margin="10dp"/>-->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/enter_email_message"
+            android:id="@+id/textView10"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"/>
+
+        <EditText
+            android:id="@+id/editTextDialogInput"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:ems="10"
+            android:gravity="top|center"
+            android:background="@drawable/rectangle"
+            android:hint="abc@email.com"
+            android:textColor="#FFFFFF"
+            android:padding="15dp">
+
+            <requestFocus />
+        </EditText>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/required_field"
+            android:textColor="@android:color/holo_red_dark"
+            android:id="@+id/tvRequired"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#55ffffff"
+        android:layout_marginTop="10dp"
+        android:text="@string/ok"
+        android:id="@+id/buttonOk"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

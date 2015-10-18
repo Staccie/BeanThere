@@ -1,13 +1,8 @@
 package com.beanthere.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.beanthere.objects.AppObject;
@@ -35,8 +30,8 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
         Bitmap bm = null;
 
         try {
-            URL url = new URL(AppObject.image_folder + params[0]);
-            Log.e("ImageViewDownloader", AppObject.url_dev + params[0]);
+            URL url = new URL(AppObject.SERVER_PATH + params[0]);
+            Logger.e("ImageViewDownloader", AppObject.SERVER_PATH + params[0]);
             InputStream is = url.openConnection().getInputStream();
 
 //            bm = BitmapFactory.decodeStream(is);
@@ -64,7 +59,7 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
             BitmapFactory.decodeByteArray(byteArr, 0, count, options);
 
 //            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            options.inSampleSize = 2;
+            options.inSampleSize = 4;
             options.inPurgeable = true;
             options.inInputShareable = true;
             options.inJustDecodeBounds = false;

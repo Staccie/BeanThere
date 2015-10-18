@@ -83,6 +83,17 @@
     <string name="btn_update_profile">Update</string>
     <string name="title_activity_signup">Sign Up</string>
     <string name="title_activity_cafe_filter">Cafe Filter</string>
+    <string name="enter_email_message">Please enter email address to continue</string>
+    <string name="please_wait">Please wait a moment...</string>
+    <string name="no_internet">No Internet connection. Please try again.</string>
+    <string name="date_join">Joined since %1$s</string>
+    <string name="connection_timeout">Connection timeout. Please try again with stable Internet connection.</string>
+    <string name="success_register">Account successfully created. Please login to continue.</string>
+    <string name="unknown_signup_error">There was some problem while signing you up. Please try again. If problem persists, please contact our administrator.</string>
+    <string name="update_profile_success">Profile updated successfully. Please login again to continue</string>
+    <string name="fill_in_email">Please fill in email.</string>
+    <string name="password_not_match">Password not match.</string>
+    <string name="unknown_response">Unknown server response</string>
 
 
 </resources>

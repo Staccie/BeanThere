@@ -4,6 +4,7 @@
     <string-array name="menu_array">
         <item>Cafe List</item>
         <item>Cafe Filter</item>
+        <item>Favourites</item>
         <item>Enter Promo Code</item>
         <item>Wallet</item>
         <item>Settings</item>
@@ -23,6 +24,7 @@
     <integer-array name="menu_icon">
         <item>@drawable/ic_menu_coffee</item>
         <item>@drawable/ic_menu_filter</item>
+        <item>@drawable/ic_menu_favourite</item>
         <item>@drawable/ic_menu_promo_code</item>
         <item>@drawable/ic_menu_wallet</item>
         <item>@drawable/ic_menu_settings</item>

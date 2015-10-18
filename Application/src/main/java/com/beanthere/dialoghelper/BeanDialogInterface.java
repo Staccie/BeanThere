@@ -19,4 +19,8 @@ public interface BeanDialogInterface {
 		void onNegativeClick(String id);
 	}
 
+	interface OnProgressDialogCancelled {
+		void onProgressDialogCancelled(String tag);
+	}
+
 }

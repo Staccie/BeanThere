@@ -35,11 +35,10 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,15 +50,14 @@ import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.BeanDialogInterface.OnInputDialogDismissListener;
 import com.beanthere.dialoghelper.ConfirmationDialog;
+import com.beanthere.dialoghelper.DialogHelper;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
 import com.beanthere.objects.GeneralResponse;
+import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
-import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
-
-import javax.xml.namespace.NamespaceContext;
 
 
 public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnItemClickListener,
@@ -77,7 +75,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private String[] mNavDrawerTitle;
-    private int[] mNavDrawerIcon = {R.drawable.ic_menu_coffee, R.drawable.ic_menu_filter, R.drawable.ic_menu_promo_code, R.drawable.ic_menu_wallet, R.drawable.ic_menu_settings, R.drawable.ic_menu_logout};
+    private int[] mNavDrawerIcon = {R.drawable.ic_menu_coffee, R.drawable.ic_menu_filter, R.drawable.ic_menu_favourite, R.drawable.ic_menu_promo_code, R.drawable.ic_menu_wallet, R.drawable.ic_menu_settings, R.drawable.ic_menu_logout};
 
     private LocationManager mLocationManager;
     private BeanLocationListener mLocationListener;
@@ -95,6 +93,8 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 
+
+
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // improve performance by indicating the list if fixed size.
@@ -105,17 +105,21 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mDrawerList.setLayoutManager(layoutManager);
 
-        String fbname = SharedPreferencesManager.getString(this, "fbname");
+        String userName = SharedPreferencesManager.getString(this, "first_name");
+        String dateJoin = SharedPreferencesManager.getString(this, "date_join");
 
-        mDrawerList.setAdapter(new NavDrawerAdapter(this, mNavDrawerTitle, mNavDrawerIcon, fbname, this));
+        mDrawerList.setAdapter(new NavDrawerAdapter(this, mNavDrawerTitle, mNavDrawerIcon, userName, dateJoin, this));
 
         // TODO change to Toolbar
         /*toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setActionBar(toolbar);*/
 
+//        getActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_CUSTOM);
+
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+//        getActionBar().setCustomView(R.layout.actionbar);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -136,6 +140,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 
@@ -149,12 +154,12 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 //        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
-//        android.app.ActionBar actionBar = getActionBar();
-//        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-//        actionBar.setDisplayShowHomeEnabled(false);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setDisplayShowTitleEnabled(false);
-//        actionBar.setCustomView(R.layout.actionbar);
+        android.app.ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setDisplayShowHomeEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setCustomView(R.layout.actionbar);
 
         return true;
     }
@@ -163,7 +168,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+//        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 //        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -210,16 +215,18 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
                 startActivity(new Intent(this, CafeFilterActivity.class));
                 break;
             case 3:
-                showPromoDialog("getpromo", "0");
-
+                startActivity(new Intent(this, FavouriteListActivity.class));
                 break;
             case 4:
-                startActivity(new Intent(this, VoucherListActivity.class));
+                showPromoDialog("getpromo", "0");
                 break;
             case 5:
-                startActivity(new Intent(this, ProfileActivity.class));
+                startActivity(new Intent(this, VoucherListActivity.class));
                 break;
             case 6:
+                startActivity(new Intent(this, ProfileActivity.class));
+                break;
+            case 7:
                 logout();
                 break;
             default:
@@ -443,7 +450,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         @Override
         protected String doInBackground(String... params) {
 
-            Log.e("GetPromoTask", "doInBackground");
+            Logger.e("GetPromoTask", "doInBackground");
 
             HttpHandler req = new HttpHandler();
             String response = req.getVoucher(params[0], params[1]);
@@ -457,7 +464,8 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
             super.onPostExecute(response);
 
             if (response == null || response.isEmpty()) {
-                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+//                showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+                DialogHelper.showInvalidServerResponse(NavDrawerActivity.this);
             } else {
 
                 Gson gson = new Gson();

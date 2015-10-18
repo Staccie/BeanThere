@@ -32,25 +32,38 @@ public class PromoInputDialog extends DialogFragment {
 
     }
 
+    public static PromoInputDialog newEmailInput(String email) {
+
+        PromoInputDialog dialog = new PromoInputDialog();
+        Bundle args = new Bundle();
+        args.putString("email", email);
+        dialog.setArguments(args);
+        return dialog;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        if (getTag().equals("getpromo"))  {
-            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_promo_code, null);
-        } else if (getTag().equals("redeempromo")) {
-            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_redeem_voucher, null);
-        } else {
-            // Temporarily set this as default
-            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_redeem_voucher, null);
-        }
-
-        final TextView tvRequired = (TextView) view.findViewById(R.id.tvRequired);
-
-        builder.setView(view);
+        String tag = getTag() == null ? "" : getTag();
 
         final String voucherId = getArguments().getString("voucherId");
+        final String email = getArguments().getString("email", "");
+
+        if (tag.equals("getpromo"))  {
+            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_promo_code, null);
+        } else if (tag.equals("redeempromo")) {
+            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_redeem_voucher, null);
+        } else if (tag.equals("emailforfb")){
+            this.view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_email, null);
+            ((TextView) this.view.findViewById(R.id.editTextDialogInput)).setText(email);
+        } else {
+            return null;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+
+        final TextView tvRequired = (TextView) view.findViewById(R.id.tvRequired);
 
         // Create positive button to dialog
         Button btnOk = (Button) view.findViewById(R.id.buttonOk);

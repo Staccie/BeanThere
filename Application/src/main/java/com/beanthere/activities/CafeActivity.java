@@ -21,6 +21,7 @@ import com.beanthere.objects.Category;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.objects.OperatingHour;
 import com.beanthere.utils.ImageViewDownloader;
+import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -103,7 +104,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
             new GetCafeDetailsTask().execute(SharedPreferencesManager.getAPIKey(this));
         }
 
-        setTitle("");
+        setTitle(mCafeName);
 
     }
 
@@ -137,7 +138,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         @Override
         protected Boolean doInBackground(String... params) {
 
-            Log.e("doinbackground", "mCafeId: " + mCafeId + "; isLoading: " + String.valueOf(isLoading));
+            Logger.e("doinbackground", "mCafeId: " + mCafeId + "; isLoading: " + String.valueOf(isLoading));
             if (mCafeId != "" && !isLoading) {
                 isLoading = true;
                 HttpHandler req = new HttpHandler();

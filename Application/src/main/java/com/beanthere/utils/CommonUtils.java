@@ -2,6 +2,8 @@ package com.beanthere.utils;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -45,5 +47,13 @@ public class CommonUtils {
         Point size = new Point();
         display.getSize(size);
         AppObject.screenWidth = size.x;
+    }
+
+    /** Returns true if device is connected to Internet */
+    public static boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+
+        return info == null ? false : info.isConnected();
     }
 }

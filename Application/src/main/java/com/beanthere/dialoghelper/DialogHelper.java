@@ -11,15 +11,27 @@ import com.beanthere.R;
  */
 public class DialogHelper {
 
-    public static void showInvalidServerResponse(Activity activity, Context context) {
-        FragmentManager fm = activity.getFragmentManager();
-        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(context.getString(R.string.error_title), context.getString(R.string.invalid_server_response), "");
+    public static void showInvalidServerResponse(Context context) {
+        FragmentManager fm = ((Activity) context).getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance("", context.getString(R.string.invalid_server_response), "");
         noticeDialog.show(fm, "");
     }
-//
-//    public void showNoticeDialog(Context context, String title, String message) {
-//        FragmentManager fm = getFragmentManager();
-//        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.app_name), message, neutralButton);
-//        noticeDialog.show(fm, tag);
-//    }
+
+    public static void showErrorDialog(Context context, String message) {
+        FragmentManager fm = ((Activity) context).getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance("", message, "");
+        noticeDialog.show(fm, "");
+    }
+
+    public static void showConnectionTimeout(Context context) {
+        FragmentManager fm = ((Activity) context).getFragmentManager();
+        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance("", context.getString(R.string.connection_timeout), "");
+        noticeDialog.show(fm, "");
+    }
+
+    public static void showProgressDialog(Context context, String tag, String message) {
+        FragmentManager fm = ((Activity) context).getFragmentManager();
+        BeanProgressDialog progressDialog = BeanProgressDialog.show(message);
+        progressDialog.show(fm, tag);
+    }
 }

@@ -26,4 +26,21 @@ public class DateFormat {
         return str;
     }
 
+    public static String formatDateJoin(String strDate) {
+
+        SimpleDateFormat parser = new SimpleDateFormat();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MMM-dd");
+        String str = "";
+
+        try {
+
+            Date date = parser.parse(strDate);
+            str = formatter.format(date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
 }

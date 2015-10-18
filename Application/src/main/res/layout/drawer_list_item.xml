@@ -12,7 +12,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:id="@+id/imageViewDrawerIcon"
-        android:background="@android:color/black" />
+        android:background="#66B3DAFF" />
 
     <TextView
         android:id="@+id/textViewDrawerItem"

@@ -1,9 +1,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" android:theme="@style/Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" android:theme="@style/ThemeOverlay.AppCompat.Dark">
         <!-- Customize your theme here. -->
         <!--<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>-->
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
 
     <style name="Hyperlink" parent="android:Widget.TextView">
@@ -47,6 +48,11 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="MediumTextGrey">
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textColor">#8C8C8C</item>
+    </style>
+
     <style name="MediumTextBlack">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -71,6 +77,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/form_tblrow</item>
         <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">#FFFFFF</item>
     </style>
 
 </resources>
