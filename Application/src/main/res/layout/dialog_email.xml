@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/rectangle_black">
+    android:background="@drawable/rectangle_black"
+    android:padding="15dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,15 +27,12 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/enter_email_message"
             android:id="@+id/textView10"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_margin="10dp"
             android:gravity="center"
             android:textColor="@android:color/white"/>
 
         <EditText
             android:id="@+id/editTextDialogInput"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:ems="10"
@@ -42,7 +40,7 @@
             android:background="@drawable/rectangle"
             android:hint="abc@email.com"
             android:textColor="#FFFFFF"
-            android:padding="15dp">
+            android:padding="10dp">
 
             <requestFocus />
         </EditText>

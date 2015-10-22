@@ -57,6 +57,7 @@ import com.beanthere.listeners.BeanLocationListener;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
+import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 
 
@@ -248,7 +249,7 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
 
     protected void logout() {
 
-        if (SharedPreferencesManager.getInt(this, "logintype") == 0) {
+        if (SharedPreferencesManager.getInt(this, "logintype") == 1) {
 
             SharedPreferences settings = getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
             settings.edit().clear().commit();
@@ -258,33 +259,19 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
             startActivity(intent);
             finish();
         } else {
-//            LoginManager.getInstance().logOut();
-//            Session session = Session.getActiveSession();
-//            if (session != null) {
-//
-//                if (!session.isClosed()) {
-//                    session.closeAndClearTokenInformation();
-//                    //clear your preferences if saved
-//                }
-//            } else {
-//
-//                session = new Session(context);
-//                Session.setActiveSession(session);
-//
-//                session.closeAndClearTokenInformation();
-                //clear your preferences if saved
 
-//            }
-            String fb_id = SharedPreferencesManager.getString(this, "fb_user_id");
-            String email = SharedPreferencesManager.getString(this, "email");
+            LoginManager.getInstance().logOut();
+
+            String fbId = SharedPreferencesManager.getString(this, "fb_user_id");
+            String fbEmail = SharedPreferencesManager.getString(this, "fb_email");
 
             getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE).edit().clear().commit();
 
             // Save email and fb_id to login user next time when user login
             SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString("fb_id", fb_id);
-            editor.putString("email", email);
+            editor.putString("fb_user_id", fbId);
+            editor.putString("fb_email", fbEmail);
             editor.commit();
 
             Intent intent = new Intent(this, MainActivity.class);

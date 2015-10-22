@@ -44,7 +44,7 @@ public class PromoInputDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        String tag = getTag() == null ? "" : getTag();
+        final String tag = getTag() == null ? "" : getTag();
 
         final String voucherId = getArguments().getString("voucherId");
         final String email = getArguments().getString("email", "");
@@ -76,7 +76,11 @@ public class PromoInputDialog extends DialogFragment {
                     tvRequired.setVisibility(View.VISIBLE);
                 } else {
                     tvRequired.setVisibility(View.GONE);
-                    ((BeanDialogInterface.OnInputDialogDismissListener) getActivity()).onInputDialogDismiss(getTag(), voucherId + "," + data);
+                    if (tag.equals("emailforfb")) {
+                        ((BeanDialogInterface.OnInputDialogDismissListener) getActivity()).onInputDialogDismiss(getTag(), data);
+                    } else {
+                        ((BeanDialogInterface.OnInputDialogDismissListener) getActivity()).onInputDialogDismiss(getTag(), voucherId + "," + data);
+                    }
                     dismiss();
                 }
             }

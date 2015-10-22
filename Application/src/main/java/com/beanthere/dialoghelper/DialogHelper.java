@@ -1,7 +1,9 @@
 package com.beanthere.dialoghelper;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.beanthere.R;
@@ -33,5 +35,13 @@ public class DialogHelper {
         FragmentManager fm = ((Activity) context).getFragmentManager();
         BeanProgressDialog progressDialog = BeanProgressDialog.show(message);
         progressDialog.show(fm, tag);
+    }
+
+    public static void dismissProgressDialog(Context context, String tag) {
+        FragmentManager fm = ((Activity) context).getFragmentManager();
+        DialogFragment dialogFragment = (DialogFragment) fm.findFragmentByTag(tag);
+        if (dialogFragment != null) {
+            dialogFragment.dismiss();
+        }
     }
 }

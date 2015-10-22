@@ -32,10 +32,12 @@ import com.beanthere.R;
 import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
 import com.beanthere.dialoghelper.DialogHelper;
+import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.objects.AppObject;
 import com.beanthere.objects.User;
 import com.beanthere.utils.CommonUtils;
+import com.beanthere.utils.IOUtils;
 import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
 import com.facebook.AccessToken;
@@ -53,8 +55,11 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 
 /**
@@ -130,22 +135,22 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
             int loginType = SharedPreferencesManager.getInt(this, "logintype");
 
-            String email = SharedPreferencesManager.getString(this, "email");
-            String pw = SharedPreferencesManager.getString(this, "p");
-
             if (loginType == 1) {
+
+                String email = SharedPreferencesManager.getString(this, "email");
+                String pw = SharedPreferencesManager.getString(this, "p");
+
                 if (!email.isEmpty() && !pw.isEmpty()) {
                     new LoginTask().execute("1", email, pw);
                 }
+            } else if (loginType == 2) {
+
+                String email = SharedPreferencesManager.getString(this, "fb_email");
+
+                if (!email.isEmpty()) {
+                    new LoginTask().execute("2", email, AppObject.DEFAULT_P);
+                }
             }
-//        else if (loginType == 2) {
-//            if (email.isEmpty()) {
-            // Prompt for email
-//                FragmentManager fm = getFragmentManager();
-//                NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
-//                noticeDialog.show(fm, "");
-//            }
-//        }
         }
 
     }
@@ -153,7 +158,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
     private void registerLoginFBUser(String accessToken, JSONObject json) {
 
         String jsonresult = String.valueOf(json);
-        Log.e("JSON Result", jsonresult);
+        Logger.e("JSON Result", jsonresult);
 
         String email = json.optString("email", "");
         mFBId = json.optString("id");
@@ -161,25 +166,38 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         mFBLastName = json.optString("last_name", "last name");
         mFBToken = accessToken;
 
-        SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("fb_user_id", mFBId);
-        editor.putString("fb_auth_token", accessToken);
-        editor.putString("fbname", mFBFirstName);
-        editor.commit();
+//        Only save them after successfully login
+//        SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString("fb_email", email);
+//        editor.putString("fb_user_id", mFBId);
+//        editor.putString("fb_auth_token", accessToken);
+//        editor.putString("fbname", mFBFirstName);
+//        editor.commit();
 
-        int loginType = SharedPreferencesManager.getInt(this, "logintype");
-        if (loginType != 1) {
+        String prevFBId = SharedPreferencesManager.getString(this, "fb_user_id");
+        String prevFBEmail = SharedPreferencesManager.getString(this, "fb_email");
 
-            if (SharedPreferencesManager.getString(this, "email").isEmpty()) {
-                // Prompt for email input;
-                FragmentManager fm = getFragmentManager();
-                PromoInputDialog inputDialog = new PromoInputDialog().newEmailInput(email);
-                inputDialog.show(fm, "emailforfb");
-            } else {
-                // Automaically login for FB user who has registered and logged into app before
-                new LoginTask().execute(SharedPreferencesManager.getString(this, "email"), SharedPreferencesManager.getString(this, "p"));
-            }
+        Logger.e("EFESS", "prevFBId: " + prevFBId + "; prevFBEmail: " + prevFBEmail + "; current fbid: " + mFBId);
+
+        if (!prevFBId.isEmpty() && prevFBId.equals(mFBId) && !prevFBEmail.isEmpty()) {
+            // Same user logged in before. Go directly to login
+            new LoginTask().execute(prevFBEmail, AppObject.DEFAULT_P);
+        } else {
+            // No user logged in before or different user logged in. Prompt for email.
+            // Clear SharedPreference
+
+            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.remove("fb_email");
+            editor.remove("fb_user_id");
+            editor.remove("fb_auth_token");
+            editor.remove("fbname");
+            editor.commit();
+
+            FragmentManager fm = getFragmentManager();
+            PromoInputDialog inputDialog = new PromoInputDialog().newEmailInput(email);
+            inputDialog.show(fm, "emailforfb");
         }
 
         new DownloadProfilePic().execute();
@@ -200,6 +218,12 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         editor.putString("fb_auth_token", user.fb_auth_token);
         editor.putString("date_join", user.created);
         editor.putInt("logintype", loginType);
+
+        if (loginType == 2) {
+            editor.putString("fb_email", mFBEmail);
+            editor.putString("fb_user_id", user.fb_user_id);
+        }
+
         editor.putBoolean("checkLocation", true);
         editor.commit();
 
@@ -223,6 +247,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            DialogHelper.showProgressDialog(MainActivity.this, "registerfbuser", getString(R.string.please_wait));
         }
 
         @Override
@@ -240,11 +265,14 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         @Override
         protected void onCancelled(String s) {
             super.onCancelled(s);
+            DialogHelper.dismissProgressDialog(MainActivity.this, "registerfbuser");
         }
 
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+
+            DialogHelper.dismissProgressDialog(MainActivity.this, "registerfbuser");
 
             if (response == null || response.isEmpty()) {
                 DialogHelper.showInvalidServerResponse(MainActivity.this);
@@ -254,7 +282,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
             } else {
                 // TODO register response should return error code, if account existed or registered successful then only login
                 // Try login anyway until we get a meaningful code from server
-                new LoginTask().execute();
+                new LoginTask().execute("2", mFBEmail, AppObject.DEFAULT_P);
 
             }
         }
@@ -268,7 +296,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // TODO Show progress dialog
+            DialogHelper.showProgressDialog(MainActivity.this, "loginfbuser", getString(R.string.please_wait));
         }
 
         @Override
@@ -289,12 +317,15 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         @Override
         protected void onCancelled(String s) {
             super.onCancelled(s);
+            DialogHelper.dismissProgressDialog(MainActivity.this, "loginfbuser");
             // Cancel login
         }
 
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+
+            DialogHelper.dismissProgressDialog(MainActivity.this, "loginfbuser");
 
             if (!isCancelled() && !isFinishing()) {
 
@@ -330,12 +361,21 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
             if (!mFBId.isEmpty()) {
 
-                URL image_value;
+                URL url;
 
                 try {
-                    image_value = new URL("http://graph.facebook.com/" + mFBId + "/picture?type=large");
-                    Logger.e("image_value", image_value.toString());
-                    bm = BitmapFactory.decodeStream(image_value.openConnection().getInputStream());
+                    url = new URL("http://graph.facebook.com/" + mFBId + "/picture?type=large");
+                    Logger.e("url", url.toString());
+
+                    HttpURLConnection ucon = (HttpURLConnection) url.openConnection();
+                    ucon.setInstanceFollowRedirects(false);
+                    URL secondURL = new URL(ucon.getHeaderField("Location"));
+                    URLConnection conn = secondURL.openConnection();
+
+//                    InputStream is = (InputStream) image_value.openConnection().getContent();
+//                    bm = BitmapFactory.decodeStream(image_value.openConnection().getInputStream());
+                    // TODO scale down
+//                    bm = BitmapFactory.decodeStream(conn.getInputStream());
                     Logger.e("bm", "" + (bm == null));
 
 //                    URL aURL = new URL("http://graph.facebook.com/"+params[0]+"/picture?type=large");
@@ -350,7 +390,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
 
 //                    bm = BitmapFactory.decodeStream(is);
-//                    IOUtils.copyInputStreamToFile(MainActivity.this, false, is, "fbprofilepic");
+                    IOUtils.copyInputStreamToFile(MainActivity.this, false, conn.getInputStream(), "fbprofilepic");
                 } catch (MalformedURLException e) {
                     Logger.e("@MainActivity.DownloadProfilePic", e.getMessage());
                 } catch (IOException e) {

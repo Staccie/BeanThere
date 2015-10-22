@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.beanthere.R;
+import com.beanthere.objects.CircleImageView;
 import com.beanthere.utils.DateFormat;
 import com.beanthere.utils.Logger;
 
@@ -116,15 +117,15 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         }
         else {
             File sd = mContext.getExternalFilesDir(null);
-            Logger.e("sd.path", "" + sd.getAbsolutePath());
+//            Logger.e("sd.path", "" + sd.getAbsolutePath());
             File image = new File(sd, "fbprofilepic");
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
 
-            if (bitmap != null) {
-                holder.ivProfile.setImageBitmap(bitmap);
-            } else {
+            if (bitmap == null) {
                 holder.ivProfile.setImageResource(R.drawable.placeholder_people);
+            } else {
+                holder.ivProfile.setImageBitmap(bitmap);
             }
 
             holder.tvName.setText(mUserName);

@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by staccie on 9/13/15.
+ * Created by staccie
  */
 public class HttpHandler {
 
@@ -31,19 +31,20 @@ public class HttpHandler {
         map.put("first_name", firstName);
         map.put("last_name", lastName);
         map.put("dob", dob);
-//        map.put("fb_user_id", fb_user_id);
-//        map.put("fb_auth_token", fb_auth_token);
-        Log.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob);
-        return httpPost(map, "register", apikey);
+        map.put("fb_user_id", fb_user_id);
+        map.put("fb_auth_token", fb_auth_token);
+        Logger.e("register", email + "; " + password + "; " + firstName + "; " + lastName + "; " + dob + "; " + fb_user_id + "; " + fb_auth_token);
+        return httpPost(map, "register", "");
     }
 
     public String login(String email, String password, int type) {
-
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("email", email);
         map.put("password", password);
         map.put("logintype", type);
+
+        Logger.e("login", email + "; " + password + "; " + type);
 
         return httpPost(map, "login", "");
     }
