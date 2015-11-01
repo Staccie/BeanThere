@@ -62,16 +62,16 @@
                 </TableRow>
             </TableLayout>
 
-
             <Space
+                android:id="@+id/tableLayoutPasswordSpace"
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
 
             <TableLayout
+                android:id="@+id/tableLayoutPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal">
-
 
                 <TableRow style="@style/FormTableRow">
 
@@ -154,6 +154,7 @@
         android:layout_marginTop="15dp"
         android:text="@string/btn_update_profile"
         android:id="@+id/button"
+        android:background="@color/black_54"
         android:onClick="onClickUpdateProfile"/>
 
 </LinearLayout>

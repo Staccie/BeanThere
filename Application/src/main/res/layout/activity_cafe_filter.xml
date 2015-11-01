@@ -8,14 +8,16 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@color/black_87">
 
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchView"
-            android:background="@drawable/rectangle_black"
             android:layout_gravity="end"
+            android:background="@drawable/rectangle_white"
             android:queryHint="Search cafe"
             android:baselineAligned="true" />
     </LinearLayout>

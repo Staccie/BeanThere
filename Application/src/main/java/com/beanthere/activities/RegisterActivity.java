@@ -29,7 +29,7 @@ import org.json.JSONObject;
 /**
  * Created by staccie
  */
-public class RegisterActivity extends Activity
+public class RegisterActivity extends BaseActivity
         implements OnDataSetListener,
         BeanDialogInterface.OnPositiveClickListener,
         BeanDialogInterface.OnProgressDialogCancelled {

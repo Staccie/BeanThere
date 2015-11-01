@@ -166,6 +166,8 @@
         android:layout_marginTop="15dp"
         android:text="@string/btn_register"
         android:id="@+id/button"
-        android:onClick="onClickRegister"/>
+        android:background="@color/black_54"
+        android:onClick="onClickRegister"
+        style="@style/MediumText"/>
 
 </LinearLayout>

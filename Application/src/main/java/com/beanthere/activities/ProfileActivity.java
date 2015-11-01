@@ -2,6 +2,8 @@ package com.beanthere.activities;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,9 +23,10 @@ import com.beanthere.objects.GeneralResponse;
 import com.beanthere.utils.Logger;
 import com.beanthere.utils.Validator;
 import com.beanthere.webservice.HttpHandler;
+import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 
-public class ProfileActivity extends NavDrawerActivity
+public class ProfileActivity extends BaseActivity
         implements OnDataSetListener, BeanDialogInterface.OnPositiveClickListener,
                     BeanDialogInterface.OnProgressDialogCancelled {
 
@@ -35,10 +38,12 @@ public class ProfileActivity extends NavDrawerActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_profile, null, false);
-        frameLayout.addView(view);
+//        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = layoutInflater.inflate(R.layout.activity_profile, null, false);
+//        frameLayout.addView(view);
+
+        setContentView(R.layout.activity_profile);
 
         // Populate user details
         ((EditText) findViewById(R.id.firstName)).setText(SharedPreferencesManager.getString(this, "first_name"));
@@ -49,9 +54,11 @@ public class ProfileActivity extends NavDrawerActivity
         mLoginType = SharedPreferencesManager.getInt(this, "logintype");
 
         if (mLoginType == 2) {
-            findViewById(R.id.password).setVisibility(View.GONE);
-            findViewById(R.id.confirmPassword).setVisibility(View.GONE);
+            findViewById(R.id.tableLayoutPasswordSpace).setVisibility(View.GONE);
+            findViewById(R.id.tableLayoutPassword).setVisibility(View.GONE);
         } else {
+            findViewById(R.id.tableLayoutPasswordSpace).setVisibility(View.VISIBLE);
+            findViewById(R.id.tableLayoutPassword).setVisibility(View.VISIBLE);
             ((EditText) findViewById(R.id.password)).setText(SharedPreferencesManager.getString(this, "p"));
             ((EditText) findViewById(R.id.confirmPassword)).setText(SharedPreferencesManager.getString(this, "p"));
         }
@@ -159,6 +166,36 @@ public class ProfileActivity extends NavDrawerActivity
                 }
             }
         }
+    }
+
+    private void logout() {
+
+        if (SharedPreferencesManager.getInt(this, "logintype") == 1) {
+
+            SharedPreferences settings = getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE);
+            settings.edit().clear().commit();
+
+        } else {
+
+            LoginManager.getInstance().logOut();
+
+            String fbId = SharedPreferencesManager.getString(this, "fb_user_id");
+            String fbEmail = SharedPreferencesManager.getString(this, "fb_email");
+
+            getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE).edit().clear().commit();
+
+            // Save email and fb_id to login user next time when user login
+//            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sp.edit();
+//            editor.putString("fb_user_id", fbId);
+//            editor.putString("fb_email", fbEmail);
+//            editor.commit();
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
 }

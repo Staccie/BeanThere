@@ -3,6 +3,7 @@ package com.beanthere.dialoghelper;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,7 @@ import com.beanthere.R;
 
 import org.w3c.dom.Text;
 
-public class PromoInputDialog extends DialogFragment {
+public class PromoInputDialog extends DialogFragment implements DialogInterface.OnCancelListener {
 
     private View view;
 
@@ -92,4 +93,9 @@ public class PromoInputDialog extends DialogFragment {
         return dialog;
     }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        ((BeanDialogInterface.OnInputDialogDismissListener) getActivity()).onInputDialogDismiss(getTag(), null);
+    }
 }

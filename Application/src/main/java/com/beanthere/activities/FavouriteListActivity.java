@@ -43,7 +43,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavouriteListActivity extends NavDrawerActivity implements BeanDialogInterface.OnNegativeClickListener, BeanDialogInterface.OnPositiveClickListener {
+public class FavouriteListActivity extends BaseActivity implements BeanDialogInterface.OnNegativeClickListener, BeanDialogInterface.OnPositiveClickListener {
 
     private List<Cafe> mList;
     private CafeListAdapter mAdapter;
@@ -55,12 +55,14 @@ public class FavouriteListActivity extends NavDrawerActivity implements BeanDial
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
-        frameLayout.addView(view);
+//        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
+//        frameLayout.addView(view);
 
-        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        setContentView(R.layout.activity_cafe_list);
+
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -68,14 +70,14 @@ public class FavouriteListActivity extends NavDrawerActivity implements BeanDial
             }
         });
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeList);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBarCafeList);
 
         if (mList == null) {
             mList = new ArrayList<>();
         }
 
         mAdapter = new CafeListAdapter(this, mList);
-        mListView = (ListView) view.findViewById(R.id.listViewCafe);
+        mListView = (ListView) findViewById(R.id.listViewCafe);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

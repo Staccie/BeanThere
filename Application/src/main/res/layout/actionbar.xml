@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#FFFFFF"
-    android:gravity="center"
     android:paddingTop="5dp"
     android:paddingBottom="5dp">
 
     <ImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginLeft="-10dp"
-        android:id="@+id/imageView2"
-        android:src="@drawable/ic_logo_black"/>
-</LinearLayout>
+        android:id="@+id/imageViewABLogo"
+        android:src="@drawable/ic_logo_black"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="-20dp"/>
+
+    <!--<ImageButton-->
+        <!--android:layout_width="36dp"-->
+        <!--android:layout_height="36dp"-->
+        <!--android:id="@+id/imageButtonFavourite"-->
+        <!--android:src="@drawable/ic_menu_favourite"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:visibility="gone"-->
+        <!--android:background="#00000000"-->
+        <!--android:onClick="onClickUpdateFavourite"/>-->
+
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/imageButtonFavourite"
+        android:src="@drawable/ic_menu_favourite"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        android:background="#00000000"
+        android:onClick="onClickUpdateFavourite"/>
+</RelativeLayout>

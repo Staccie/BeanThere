@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.beanthere.R;
 import com.beanthere.objects.CircleImageView;
+import com.beanthere.objects.CircularImageView;
 import com.beanthere.utils.DateFormat;
 import com.beanthere.utils.Logger;
 
@@ -42,6 +43,7 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
     private String mNavTitles[];
     private int mIcons[];
     private String mUserName;
+    private String mFBId;
     private String mDateJoin;
 
     private OnItemClickListener mListener;
@@ -53,11 +55,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         void onClick(View view, int position);
     }
 
-    public NavDrawerAdapter(Context context, String titles[], int[] icons, String username, String dateJoin, OnItemClickListener listener){
+    public NavDrawerAdapter(Context context, String titles[], int[] icons, String username, String fbid, String dateJoin, OnItemClickListener listener){
         mContext = context;
         mNavTitles = titles;
         mIcons = icons;
         mUserName = username;
+        mFBId = fbid;
         mDateJoin = dateJoin;
         mListener = listener;
     }
@@ -69,7 +72,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
         TextView tvItem;
         TextView tvName;
         ImageView ivIcon;
-        ImageView ivProfile;
+//        ImageView ivProfile;
+        CircularImageView ivProfile;
         TextView tvDateJoin;
 
         public ViewHolder(View itemView,int ViewType) {
@@ -83,7 +87,8 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
                 type = 1;
             }
             else{
-                ivProfile = (ImageView) itemView.findViewById(R.id.imageViewProfile);
+//                ivProfile = (ImageView) itemView.findViewById(R.id.imageViewProfile);
+                ivProfile = (CircularImageView) itemView.findViewById(R.id.imageViewProfile);
                 tvDateJoin = (TextView) itemView.findViewById(R.id.textViewJoinDate);
                 tvName = (TextView) itemView.findViewById(R.id.textViewFBName);
                 type = 0;
@@ -112,13 +117,12 @@ public class NavDrawerAdapter extends RecyclerView.Adapter<NavDrawerAdapter.View
 
         if(holder.type ==1) {
             holder.tvItem.setText(mNavTitles[position - 1]);
-            Logger.e("onBindViewHolder", "position " + position);
             holder.ivIcon.setImageResource(mIcons[position - 1]);
         }
         else {
             File sd = mContext.getExternalFilesDir(null);
 //            Logger.e("sd.path", "" + sd.getAbsolutePath());
-            File image = new File(sd, "fbprofilepic");
+            File image = new File(sd, mFBId);
             BitmapFactory.Options bmOptions = new BitmapFactory.Options();
             Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
 

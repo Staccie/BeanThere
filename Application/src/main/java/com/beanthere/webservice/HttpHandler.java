@@ -117,49 +117,29 @@ public class HttpHandler {
         return httpPost(map, "user/" + user_id, apikey);
     }
 
-    public String getCafeFilterList(String searchText, Double mLatitude, Double mLongitude, String apikey) {
+    public String getCafeFilterList(String searchText, String apikey) {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("search", searchText);
-        map.put("latitude", mLatitude == null ? "" : mLatitude);
-        map.put("longitude", mLongitude == null ? "" : mLongitude);
+        map.put("latitude", "");
+        map.put("longitude", "");
 
         return httpPost(map, "merchants/search", apikey);
     }
 
-    /*public JSONObject setUpdateProfile(String email, String password, String firstName, String lastName, String dob, String fb_user_id, String fb_auth_token) {
+    public String addFavourite(String apikey, String merchantId) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("merchant_id", merchantId);
 
-        JSONObject json = new JSONObject();
-
-        try {
-            json.put("email", email);
-            json.put("password", password);
-            json.put("firstName", firstName);
-            json.put("lastName", lastName);
-            json.put("dob", dob);
-            json.putOpt("fb_user_id", fb_user_id);
-            json.putOpt("fb_auth_token", fb_auth_token);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return json;
+        return httpPost(map, "favourites", apikey);
     }
 
-    public JSONObject setMerchantSearch(String text, float latitude, float longitude) {
+    public String deleteFavourite(String apikey, String merchantId) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("merchant_id", merchantId);
 
-        JSONObject json = new JSONObject();
-
-        try {
-            json.putOpt("search", text);
-            json.putOpt("latitude", latitude);
-            json.putOpt("longitude", longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return json;
-    }*/
+        return httpDelete(map, "favourites/" + merchantId, apikey);
+    }
 
     private String httpPost(Map<String, Object> map, String action, String apikey) {
 
@@ -275,8 +255,67 @@ public class HttpHandler {
                 conn.disconnect();
             }
         }
-
         return response;
+    }
 
+    private String httpDelete(Map<String, Object> map, String action, String apikey) {
+
+        String requestURL = (AppObject.IS_DEV ? AppObject.SERVER_DEV_URL : AppObject.SERVER_DEV_URL) + action;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        HttpURLConnection conn = null;
+
+        try {
+            Log.e("httpDelete", requestURL);
+
+            URL url = new URL(requestURL);
+
+            StringBuilder postData = new StringBuilder();
+            for (Map.Entry<String, Object> param : map.entrySet()) {
+                if (postData.length() != 0) postData.append('&');
+                postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                postData.append('=');
+                postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+            }
+            byte[] postDataBytes = postData.toString().getBytes("UTF-8");
+
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+
+            if (!apikey.isEmpty()) {
+                conn.setRequestProperty("Authorization", apikey);
+            }
+
+            conn.setDoOutput(true);
+            conn.getOutputStream().write(postDataBytes);
+            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(30000);
+
+            InputStream in = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            Log.e("httpPost", stringBuilder.toString());
+
+        } catch (MalformedURLException e) {
+            Log.e("@HttpHandler:httpPost", "MalformedURLException: " + e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            Log.e("@HttpHandler:httpPost", "UnsupportedEncodingException: " + e.getMessage());
+        } catch (IOException e) {
+            Log.e("@HttpHandler:httpPost", "IOException: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }

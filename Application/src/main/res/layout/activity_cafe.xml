@@ -128,6 +128,56 @@
                 <TextView
                     style="@style/MediumTextBlack"
                     android:textStyle="bold"
+                    android:text="@string/tv_title_bean"
+                    android:id="@+id/textViewTitleBean"
+                    android:layout_marginBottom="2dp"/>
+
+                <TextView
+                    style="@style/MediumTextBlack"
+                    android:text="@string/no_info"
+                    android:id="@+id/textViewBean"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    style="@style/MediumTextBlack"
+                    android:textStyle="bold"
+                    android:text="@string/tv_title_coffee_machine"
+                    android:id="@+id/textViewTitleCoffeeMachine"
+                    android:layout_marginBottom="2dp"/>
+
+                <TextView
+                    style="@style/MediumTextBlack"
+                    android:text="@string/no_info"
+                    android:id="@+id/textViewCoffeeMachine"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_food"
+                        android:id="@+id/imageViewFood"
+                        android:visibility="gone"
+                        android:layout_marginRight="10dp"/>
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_wifi"
+                        android:id="@+id/imageViewWifi"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/MediumTextBlack"
+                    android:textStyle="bold"
                     android:text="@string/tv_title_operate_hours"
                     android:id="@+id/textViewTitleOperateHours"
                     android:layout_marginBottom="2dp"/>

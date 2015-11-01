@@ -1,5 +1,6 @@
 package com.beanthere.activities;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import com.beanthere.R;
 import com.beanthere.adapter.VoucherListAdapter;
 import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.dialoghelper.BeanDialogInterface;
+import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanAdapterInterface;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.objects.Voucher;
@@ -26,7 +28,7 @@ import java.util.List;
 /**
  * Created by staccie
  */
-public class VoucherListActivity extends NavDrawerActivity implements BeanAdapterInterface.OnButtonClickListener,
+public class VoucherListActivity extends BaseActivity implements BeanAdapterInterface.OnButtonClickListener,
         BeanDialogInterface.OnInputDialogDismissListener, BeanDialogInterface.OnPositiveClickListener {
 
     private List<Voucher> mList;
@@ -38,12 +40,14 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_promo_list, null,false);
-        frameLayout.addView(view);
+//        FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+//        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = layoutInflater.inflate(R.layout.activity_promo_list, null,false);
+//        frameLayout.addView(view);
 
-        mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        setContentView(R.layout.activity_promo_list);
+
+        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -56,7 +60,7 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         }
 
         mAdapter = new VoucherListAdapter(this, mList);
-        mListView = (ListView) view.findViewById(R.id.listViewPromotion);
+        mListView = (ListView) findViewById(R.id.listViewPromotion);
         mListView.setAdapter(mAdapter);;
 
         new LoadVoucherList().execute(SharedPreferencesManager.getAPIKey(this));
@@ -170,7 +174,10 @@ public class VoucherListActivity extends NavDrawerActivity implements BeanAdapte
         if (tag.equals("voucherDetail")) {
             startPromoActivity(tag);
         } else if (tag.equals("redeemPromo")) {
-            showPromoDialog("redeemPromo", id);
+            FragmentManager fm = getFragmentManager();
+            PromoInputDialog inputDialog = new PromoInputDialog().newInstance(id);
+            inputDialog.show(fm, tag);
+//            showPromoDialog("redeemPromo", id);
         }
     }
 

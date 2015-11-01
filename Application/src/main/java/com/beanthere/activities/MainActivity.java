@@ -65,7 +65,7 @@ import java.util.Arrays;
 /**
  * Launcher activity
  */
-public class MainActivity extends Activity implements BeanDialogInterface.OnInputDialogDismissListener {
+public class MainActivity extends Activity implements BeanDialogInterface.OnInputDialogDismissListener, BeanDialogInterface.OnProgressDialogCancelled {
 
     CallbackManager callbackManager;
 
@@ -79,6 +79,8 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         super.onCreate(savedInstanceState);
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+        autoOfflineLogin();
 
         setContentView(R.layout.activity_main);
 
@@ -106,7 +108,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
                                 if (response.getError() != null) {
                                     DialogHelper.showErrorDialog(MainActivity.this, response.getError().getErrorMessage());
                                 } else {
-                                    registerLoginFBUser(token.toString(), json);
+                                    registerLoginFBUser(token.getToken(), json);
                                 }
                             }
 
@@ -151,6 +153,16 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
                     new LoginTask().execute("2", email, AppObject.DEFAULT_P);
                 }
             }
+        }
+
+    }
+
+    private void autoOfflineLogin() {
+
+        if (SharedPreferencesManager.getInt(this, "logintype") != -1 && !SharedPreferencesManager.getAPIKey(this).isEmpty()) {
+            Intent intent = new Intent(this, CafeListActivity.class);
+            startActivity(intent);
+            finish();
         }
 
     }
@@ -221,7 +233,9 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
         if (loginType == 2) {
             editor.putString("fb_email", mFBEmail);
-            editor.putString("fb_user_id", user.fb_user_id);
+            // user id returned from server is different!!!
+//            editor.putString("fb_user_id", user.fb_user_id);
+            editor.putString("fb_user_id", mFBId);
         }
 
         editor.putBoolean("checkLocation", true);
@@ -235,11 +249,18 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
     @Override
     public void onInputDialogDismiss(String tag, String data) {
         if (tag.equals("emailforfb")) {
-            if (!data.isEmpty()) {
+            if (data == null || data.isEmpty()) {
+                LoginManager.getInstance().logOut();
+            } else {
                 mFBEmail  = data;
                 new RegisterTask().execute();
             }
         }
+    }
+
+    @Override
+    public void onProgressDialogCancelled(String tag) {
+
     }
 
     private class RegisterTask extends AsyncTask<String, Void, String> {
@@ -266,6 +287,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         protected void onCancelled(String s) {
             super.onCancelled(s);
             DialogHelper.dismissProgressDialog(MainActivity.this, "registerfbuser");
+            LoginManager.getInstance().logOut();
         }
 
         @Override
@@ -276,6 +298,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
             if (response == null || response.isEmpty()) {
                 DialogHelper.showInvalidServerResponse(MainActivity.this);
+                LoginManager.getInstance().logOut();
 //                FragmentManager fm = getFragmentManager();
 //                NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
 //                noticeDialog.show(fm, "");
@@ -318,6 +341,10 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
         protected void onCancelled(String s) {
             super.onCancelled(s);
             DialogHelper.dismissProgressDialog(MainActivity.this, "loginfbuser");
+
+            if (mLoginType == 2 ) {
+                LoginManager.getInstance().logOut();
+            }
             // Cancel login
         }
 
@@ -331,6 +358,10 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
                 if (response == null || response.isEmpty()) {
                     DialogHelper.showInvalidServerResponse(MainActivity.this);
+
+                    if (mLoginType == 2 ) {
+                        LoginManager.getInstance().logOut();
+                    }
 //                FragmentManager fm = getFragmentManager();
 //                NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance(getString(R.string.error_title), getString(R.string.invalid_server_response), "");
 //                noticeDialog.show(fm, "");
@@ -341,6 +372,10 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
                     if (user.error) {
                         DialogHelper.showErrorDialog(MainActivity.this, user.error_message);
+
+                        if (mLoginType == 2 ) {
+                            LoginManager.getInstance().logOut();
+                        }
 //                        FragmentManager fm = getFragmentManager();
 //                        NoticeDialogFragment noticeDialog = NoticeDialogFragment.newInstance("", user.error_message, "");
 //                        noticeDialog.show(fm, "");
@@ -390,7 +425,7 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
 
 
 //                    bm = BitmapFactory.decodeStream(is);
-                    IOUtils.copyInputStreamToFile(MainActivity.this, false, conn.getInputStream(), "fbprofilepic");
+                    IOUtils.copyInputStreamToFile(MainActivity.this, false, conn.getInputStream(), mFBId);
                 } catch (MalformedURLException e) {
                     Logger.e("@MainActivity.DownloadProfilePic", e.getMessage());
                 } catch (IOException e) {

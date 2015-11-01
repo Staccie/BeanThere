@@ -19,8 +19,8 @@ public class Cafe {
     @SerializedName("name")
     public String name;
 
-    @SerializedName("pin")
-    public String pin;
+//    @SerializedName("pin")
+//    public String pin;
 
     @SerializedName("description")
     public String description;
@@ -40,6 +40,9 @@ public class Cafe {
     @SerializedName("longitude")
     public String longitude;
 
+    @SerializedName("area_tags")
+    public String areaTags;
+
     @SerializedName("tags")
     public String tags;
 
@@ -55,11 +58,14 @@ public class Cafe {
     @SerializedName("images_3")
     public String images_3;
 
+    @SerializedName("featured")
+    public String isFeatured;
+
     @SerializedName("food")
-    public String food;
+    public String hasFood;
 
     @SerializedName("wifi")
-    public String wifi;
+    public String hasWifi;
 
     @SerializedName("instagram")
     public String instagram;
@@ -79,17 +85,17 @@ public class Cafe {
     @SerializedName("coffee_beans")
     public String coffee_beans;
 
-    @SerializedName("created_at")
-    public String created_at;
-
-    @SerializedName("created_by")
-    public String created_by;
+//    @SerializedName("created_at")
+//    public String created_at;
+//
+//    @SerializedName("created_by")
+//    public String created_by;
 
     @SerializedName("updated_at")
     public String updated_at;
 
-    @SerializedName("updated_by")
-    public String updated_by;
+//    @SerializedName("updated_by")
+//    public String updated_by;
 
     @SerializedName("distance")
     public String distance;

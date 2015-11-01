@@ -4,15 +4,16 @@
     android:id="@+id/linearLayoutDrawerItem"
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:paddingLeft="10dp">
 
     <ImageView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginLeft="5dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:padding="2dp"
         android:layout_marginRight="5dp"
         android:id="@+id/imageViewDrawerIcon"
-        android:background="#66B3DAFF" />
+        android:background="#00FFFFFF" />
 
     <TextView
         android:id="@+id/textViewDrawerItem"

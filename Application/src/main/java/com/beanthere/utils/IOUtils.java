@@ -141,7 +141,6 @@ public class IOUtils {
 			int len;
 
 			while ((len = in.read(buffer)) != -1) {
-				Log.e("write pf", "fff");
 				os.write(buffer, 0, len);
 			}
 

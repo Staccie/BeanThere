@@ -29,7 +29,7 @@ public class DateFormat {
     public static String formatDateJoin(String strDate) {
 
         Logger.e("formatDateJoin", strDate);
-
+        //2015-09-30 19:32:19
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
         String str = "";

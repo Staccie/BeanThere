@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class AppObject {
 
-    public static final boolean IS_DEV = true;
+    public static final boolean IS_DEV = false;
     public static final boolean LOGGING_MODE = true;
 
     public static final String SERVER_LIVE_URL = "http://apibeta.beanthere.my/v1/";

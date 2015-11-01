@@ -78,7 +78,7 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
             int scaledHeight;
 
             if (isLogo) {
-                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 4) : 80;
+                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 3) : 150;
             } else {
                 scaledWidth = (AppObject.screenWidth > 0) ? AppObject.screenWidth : 800;
             }

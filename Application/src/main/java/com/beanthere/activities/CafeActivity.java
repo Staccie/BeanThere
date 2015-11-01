@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -55,9 +56,12 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
     private boolean isLoading;
     private int mCurrentView;
 //    private String mExtra;
+    private boolean isFavourite;
 
     private LinearLayout llCafeDetails;
     private ProgressBar mProgressBar;
+
+    private UpdateFavouriteTask mUpdateFavouriteTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,8 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
         Log.e("onCreate", "CafeActivity");
         setContentView(R.layout.activity_cafe);
+
+        findViewById(R.id.imageButtonFavourite).setVisibility(View.VISIBLE);
 
         llCafeDetails = (LinearLayout) findViewById(R.id.llCafeDetails);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarCafeDetails);
@@ -172,6 +178,79 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         }
     }
 
+    class UpdateFavouriteTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.e("UpdateFavouriteTask", "onPreExecute");
+
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            if (mCafeId != "" && !isLoading) {
+
+                isLoading = true;
+                String response;
+                HttpHandler req = new HttpHandler();
+
+                isFavourite = mCafe.isFeatured.equals("1");
+
+                if (isFavourite) {
+                    response = req.deleteFavourite(SharedPreferencesManager.getAPIKey(CafeActivity.this), mCafeId);
+                } else {
+                    response = req.addFavourite(SharedPreferencesManager.getAPIKey(CafeActivity.this), mCafeId);
+                }
+
+                if (response == null || response.isEmpty()) {
+                    showNoticeDialog("", getString(R.string.error_title), getString(R.string.invalid_server_response), "");
+                    return false;
+                } else {
+
+                    GeneralResponse json = new Gson().fromJson(response, GeneralResponse.class);
+
+                    if (json.error) {
+                        String errorMsg = json.error_message;
+                        showNoticeDialog("", "", ((errorMsg == null || errorMsg.isEmpty()) ? getString(R.string.unknown_response) : errorMsg), "");
+                        return false;
+                    } else {
+                        isFavourite = !isFavourite;
+                        mCafe.isFeatured = isFavourite ? "1" : "0";
+                    }
+                }
+
+            }
+            return true;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            isLoading = false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            super.onPostExecute(success);
+            Log.e("UpdateFavouriteTask", String.valueOf(success));
+            isLoading = false;
+
+            if (!isCancelled() && !isFinishing()) {
+
+                if (success) {
+//                    ((ImageButton) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ib_fav_true : R.drawable.ib_fav_false);
+                    ((ImageView) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ic_is_favourite : R.drawable.ic_menu_favourite);
+                }
+
+                mProgressBar.setVisibility(View.GONE);
+            }
+
+        }
+    }
+
     private boolean loadCafeDetails(String response) {
 
         boolean isSuccess = false;
@@ -214,6 +293,10 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
 
                             TextView tvAbout = (TextView) findViewById(R.id.textViewAbout);
+                            TextView tvBeans = (TextView) findViewById(R.id.textViewBean);
+                            ImageView ivWifi = (ImageView) findViewById(R.id.imageViewWifi);
+                            ImageView ivFood = (ImageView) findViewById(R.id.imageViewFood);
+                            TextView tvCoffeeMachine = (TextView) findViewById(R.id.textViewCoffeeMachine);
                             TextView tvAdd1 = (TextView) findViewById(R.id.textViewAdd1);
                             TextView tvAdd2 = (TextView) findViewById(R.id.textViewAdd2);
                             TextView tvContact = (TextView) findViewById(R.id.textViewContactNum);
@@ -223,6 +306,28 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
 //                    tvName.setText(cafe.name);
                             tvAbout.setText(mCafe.description);
+
+                            if (mCafe.coffee_beans == null || mCafe.coffee_beans.isEmpty()) {
+                                tvBeans.setVisibility(View.GONE);
+                                findViewById(R.id.textViewTitleBean).setVisibility(View.GONE);
+                            } else {
+                                tvBeans.setText(mCafe.coffee_beans);
+                            }
+
+                            if (mCafe.coffee_machine == null || mCafe.coffee_machine.isEmpty()) {
+                                tvCoffeeMachine.setVisibility(View.GONE);
+                                findViewById(R.id.textViewTitleCoffeeMachine).setVisibility(View.GONE);
+                            } else {
+                                tvCoffeeMachine.setText(mCafe.coffee_machine);
+                            }
+
+                            if (mCafe.hasFood.equals("1")) {
+                                ivFood.setVisibility(View.VISIBLE);
+                            }
+
+                            if (mCafe.hasWifi.equals("1")) {
+                                ivWifi.setVisibility(View.VISIBLE);
+                            }
 
                             if (mCafe.address_1 == null || mCafe.address_1.isEmpty()) {
                                 tvAdd1.setVisibility(View.GONE);
@@ -237,7 +342,12 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                                 tvAdd2.setVisibility(View.VISIBLE);
                                 tvAdd2.setText(mCafe.address_2);
                             }
-                            tvContact.setText(mCafe.contact);
+
+                            if (mCafe.contact == null || mCafe.contact.isEmpty()) {
+
+                            } else {
+                                tvContact.setText(mCafe.contact);
+                            }
 //                    tvDistance.setText(CommonUtils.getDistance(cafe.distance));
 
                             if (mCafe.operatingHourList != null) {
@@ -328,6 +438,11 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
     public void onClickCafeMenu(View view) {
         switchView(1);
+    }
+
+    public void onClickUpdateFavourite(View view) {
+        mUpdateFavouriteTask = new UpdateFavouriteTask();
+        mUpdateFavouriteTask.execute();
     }
 
 }

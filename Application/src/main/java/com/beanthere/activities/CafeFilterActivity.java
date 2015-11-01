@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by staccie
  */
-public class CafeFilterActivity extends NavDrawerActivity {
+public class CafeFilterActivity extends BaseActivity {
 
     private List<Cafe> mList;
     private CafeFilterAdapter mAdapter;
@@ -40,13 +40,15 @@ public class CafeFilterActivity extends NavDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.activity_cafe_filter, null, false);
-        frameLayout.addView(view);
+//        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
+//        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view = layoutInflater.inflate(R.layout.activity_cafe_filter, null, false);
+//        frameLayout.addView(view);
 
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarCafeFilterList);
-        mSearchView = (SearchView) view.findViewById(R.id.searchView);
+        setContentView(R.layout.activity_cafe_filter);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBarCafeFilterList);
+        mSearchView = (SearchView) findViewById(R.id.searchView);
         mSearchView.setIconifiedByDefault(false);
 
         // Set text color
@@ -74,7 +76,7 @@ public class CafeFilterActivity extends NavDrawerActivity {
         }
 
         mAdapter = new CafeFilterAdapter(this, mList);
-        mListView = (ListView) view.findViewById(R.id.listViewCafeFilters);
+        mListView = (ListView) findViewById(R.id.listViewCafeFilters);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -112,7 +114,7 @@ public class CafeFilterActivity extends NavDrawerActivity {
         @Override
         protected String doInBackground(String... params) {
             Logger.e("CafeFilterActivity.LoadCafeList", "doInBackground");
-            return new HttpHandler().getCafeFilterList(params[0], mLatitude, mLongitude, params[1]);
+            return new HttpHandler().getCafeFilterList(params[0], params[1]);
         }
 
         @Override

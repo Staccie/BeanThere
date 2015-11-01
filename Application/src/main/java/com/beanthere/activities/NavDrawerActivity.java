@@ -25,6 +25,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -36,6 +39,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +58,7 @@ import com.beanthere.dialoghelper.DialogHelper;
 import com.beanthere.dialoghelper.NoticeDialogFragment;
 import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanLocationListener;
+import com.beanthere.objects.DividerItemDecoration;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
@@ -61,7 +66,7 @@ import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 
 
-public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnItemClickListener,
+public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAdapter.OnItemClickListener,
         LocationListener, BeanLocationListener.LocationReceiver,
         OnInputDialogDismissListener, BeanDialogInterface.OnPositiveClickListener {
 
@@ -94,12 +99,17 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
 
-
-
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // improve performance by indicating the list if fixed size.
         mDrawerList.setHasFixedSize(true);
+        // add divider to list items
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            mDrawerList.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider_nav_drawer, getTheme())));
+            mDrawerList.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider_nav_drawer)));
+        } else {
+            mDrawerList.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.divider_nav_drawer)));
+        }
 
         // set up the drawer's list view with items and click listener
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -107,20 +117,14 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
         mDrawerList.setLayoutManager(layoutManager);
 
         String userName = SharedPreferencesManager.getString(this, "first_name");
+        String fbid = SharedPreferencesManager.getString(this, "fb_user_id");
         String dateJoin = SharedPreferencesManager.getString(this, "date_join");
 
-        mDrawerList.setAdapter(new NavDrawerAdapter(this, mNavDrawerTitle, mNavDrawerIcon, userName, dateJoin, this));
+        mDrawerList.setAdapter(new NavDrawerAdapter(this, mNavDrawerTitle, mNavDrawerIcon, userName, fbid, dateJoin, this));
 
         // TODO change to Toolbar
         /*toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setActionBar(toolbar);*/
-
-//        getActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_CUSTOM);
-
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-//        getActionBar().setCustomView(R.layout.actionbar);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -132,12 +136,12 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
                 R.string.drawer_close  /* "close drawer" description for accessibility */
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+//                getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+                getSupportActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -155,12 +159,16 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 //        getMenuInflater().inflate(R.menu.navigation_drawer, menu);
-        android.app.ActionBar actionBar = getActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        actionBar.setDisplayShowHomeEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setCustomView(R.layout.actionbar);
+        // TODO change to toolbar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setCustomView(R.layout.actionbar);
+//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        }
 
         return true;
     }
@@ -184,16 +192,19 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
 
         // Handle action buttons
         switch (item.getItemId()) {
-            case R.id.action_websearch:
-                // create intent to perform web search for this planet
-                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
-                // catch event that there's no activity to handle intent
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
-                }
+//            case R.id.action_websearch:
+//                // create intent to perform web search for this planet
+//                Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+//                intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
+//                // catch event that there's no activity to handle intent
+//                if (intent.resolveActivity(getPackageManager()) != null) {
+//                    startActivity(intent);
+//                } else {
+//                    Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
+//                }
+//                return true;
+            case R.id.action_favorite:
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -268,11 +279,11 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
             getSharedPreferences(this.getPackageName(), Context.MODE_PRIVATE).edit().clear().commit();
 
             // Save email and fb_id to login user next time when user login
-            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("fb_user_id", fbId);
-            editor.putString("fb_email", fbEmail);
-            editor.commit();
+//            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sp.edit();
+//            editor.putString("fb_user_id", fbId);
+//            editor.putString("fb_email", fbEmail);
+//            editor.commit();
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -502,7 +513,12 @@ public class NavDrawerActivity extends Activity implements NavDrawerAdapter.OnIt
     @Override
     public void onInputDialogDismiss(String tag, String data) {
         if (tag.equals("getpromo")) {
-            new GetPromoTask().execute(data, SharedPreferencesManager.getAPIKey(this));
+            if (data == null || data.isEmpty() ) {
+
+            } else {
+                new GetPromoTask().execute(data, SharedPreferencesManager.getAPIKey(this));
+            }
         }
     }
+
 }

@@ -46,9 +46,10 @@
         </EditText>
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/required_field"
+            android:gravity="center"
             android:textColor="@android:color/holo_red_dark"
             android:id="@+id/tvRequired"
             android:layout_gravity="center_horizontal"

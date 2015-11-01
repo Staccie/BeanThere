@@ -54,6 +54,8 @@
     <string name="tv_title_operate_hours">Operating Hours</string>
     <string name="tv_title_contact">Contact Number</string>
     <string name="tv_title_address">Address</string>
+    <string name="tv_title_bean">Beans</string>
+    <string name="tv_title_coffee_machine">Coffee Machine</string>
 
     <!-- DIALOG BUTTONS -->
     <string name="yes">Yes</string>
@@ -94,6 +96,7 @@
     <string name="fill_in_email">Please fill in email.</string>
     <string name="password_not_match">Password not match.</string>
     <string name="unknown_response">Unknown server response</string>
+    <string name="action_favorite">Favourite</string>
 
 
 </resources>
