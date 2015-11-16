@@ -2,11 +2,25 @@
 <resources>
     <color name="black_87">#DD000000</color>
     <color name="black_54">#89000000</color>
+    <color name="black_60">#96000000</color>
     <color name="black_65">#65000000</color>
     <color name="app_background">#FFFFFF</color>
     <color name="android:colorPrimaryDark">#FFFFFF</color>
     <color name="android:colorPrimary">#FFFFFF</color>
     <color name="android:textColorPrimary">#000000</color>
     <color name="android:windowBackground">#FFFFFF</color>
+
+
+
+    <!--0% = #00-->
+    <!--10% = #16-->
+    <!--20% = #32-->
+    <!--30% = #48-->
+    <!--40% = #64-->
+    <!--50% = #80-->
+    <!--60% = #96-->
+    <!--70% = #112-->
+    <!--80% = #128-->
+    <!--90% = #144-->
 
 </resources>

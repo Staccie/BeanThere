@@ -4,4 +4,13 @@
     <color name="light">#080008</color>
     <color name="accent">#0000FF</color>
     <color name="colorPrimary">#0000FF</color>
+
+    <!--<style name="MyTheme" parent="Theme.AppCompat.Light">-->
+        <!--<item name="android:textViewStyle">@style/RobotoTextViewStyle</item>-->
+        <!--&lt;!&ndash;<item name="android:buttonStyle">@style/RobotoButtonStyle</item>&ndash;&gt;-->
+    <!--</style>-->
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
 </resources>

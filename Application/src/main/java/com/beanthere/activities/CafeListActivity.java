@@ -59,7 +59,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.content_frame);
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mParentView = layoutInflater.inflate(R.layout.activity_cafe_list, null,false);
+        mParentView = layoutInflater.inflate(R.layout.activity_cafe_list, null, false);
         frameLayout.addView(mParentView);
 
         mRefreshLayout = (SwipeRefreshLayout) mParentView.findViewById(R.id.swipeContainer);
@@ -112,6 +112,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     private class LoadCafeListTask extends AsyncTask<String, Void, String> {
 
         private boolean mIsInitialLoad;
+        private boolean showDistance;
 
         protected LoadCafeListTask(boolean isInitialLoad) {
             mIsInitialLoad = isInitialLoad;
@@ -129,6 +130,7 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
         @Override
         protected String doInBackground(String... params) {
             Logger.e("@CafeListActivity.LoadCafeListTask", "doInBackground");
+            showDistance = !(mLatitude == null || mLongitude == null);
             return new HttpHandler().getMerchantList(params[0], mLatitude, mLongitude);
         }
 
@@ -160,16 +162,17 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
                     if (genResponse.error) {
                         DialogHelper.showErrorDialog(CafeListActivity.this, genResponse.error_message);
                     } else {
-                        updateCafeList(genResponse.cafeList);
+                        updateCafeList(genResponse.cafeList, showDistance);
                     }
                 }
             }
         }
     }
 
-    private void updateCafeList(List<Cafe> cafeList) {
+    private void updateCafeList(List<Cafe> cafeList, boolean showDistance) {
         mList.clear();
         mList.addAll(cafeList);
+        mAdapter.setDistanceVisibility(showDistance);
         ((CafeListAdapter) mListView.getAdapter()).notifyDataSetChanged();
     }
 

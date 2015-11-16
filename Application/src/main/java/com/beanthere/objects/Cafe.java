@@ -58,8 +58,8 @@ public class Cafe {
     @SerializedName("images_3")
     public String images_3;
 
-    @SerializedName("featured")
-    public String isFeatured;
+    @SerializedName("favourite_flag")
+    public String isFavourite;
 
     @SerializedName("food")
     public String hasFood;

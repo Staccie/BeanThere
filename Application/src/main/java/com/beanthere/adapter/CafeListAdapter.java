@@ -18,8 +18,9 @@ import java.util.List;
 
 public class CafeListAdapter extends BaseAdapter {
 
-    Context mContext;
-    List<Cafe> mList;
+    private Context mContext;
+    private List<Cafe> mList;
+    private boolean distanceVisibility;
 
     public CafeListAdapter(Context context, List<Cafe> list) {
         mContext = context;
@@ -72,16 +73,27 @@ public class CafeListAdapter extends BaseAdapter {
         } else {
             new ImageViewDownloader(holder.ivCafe, false).execute(cafe.images_1);
         }
+
         holder.tvName.setText(cafe.name);
 
-        String distance = CommonUtils.getDistance(cafe.distance);
-        distance = distance == "" ? "" : distance + "KM";
+        if (this.distanceVisibility) {
+            String distance = CommonUtils.getDistance(cafe.distance);
+            distance = distance == "" ? "" : distance + "KM";
+            holder.tvDistance.setText(distance);
+            holder.tvDistance.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvDistance.setVisibility(View.GONE);
+        }
 
-        holder.tvDistance.setText(distance);
-        holder.tvAddress1.setText((cafe.address_1 == null ? "" : (cafe.address_1 + " ")) + (cafe.address_2 == null ? "" : cafe.address_2));
+        holder.tvAddress1.setText(cafe.areaTags == null ? "" : cafe.areaTags);
+//        holder.tvAddress1.setText((cafe.address_1 == null ? "" : (cafe.address_1 + " ")) + (cafe.address_2 == null ? "" : cafe.address_2));
 //        holder.tvAddress2.setText(cafe.address_2);
 
         return container;
+    }
+
+    public void setDistanceVisibility(boolean distanceVisibility) {
+        this.distanceVisibility = distanceVisibility;
     }
 
     class ViewHolder {

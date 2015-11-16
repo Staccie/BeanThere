@@ -84,7 +84,7 @@ public class VoucherListAdapter extends BaseAdapter {
         holder.btnRedeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BeanAdapterInterface.OnButtonClickListener) mContext).onButtonClick("redeemPromo", voucherId, pos);
+                ((BeanAdapterInterface.OnButtonClickListener) mContext).onButtonClick("redeempromo", voucherId, pos);
             }
         });
 

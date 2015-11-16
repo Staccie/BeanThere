@@ -78,15 +78,20 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
             int scaledHeight;
 
             if (isLogo) {
-                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 3) : 150;
+                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 2) : 200;
+//                scaledWidth = bm.getWidth();
             } else {
                 scaledWidth = (AppObject.screenWidth > 0) ? AppObject.screenWidth : 800;
             }
 
+            Logger.e("scaledWidth", scaledWidth + " dp");
+
             if (width > scaledWidth) {
-                scaledHeight = Math.round(800 / width * height);
+                scaledHeight = Math.round(scaledWidth / width * height);
                 bm = Bitmap.createScaledBitmap(bm, scaledWidth, scaledHeight, false);
             }
+
+//            IOUtils.copyInputStreamToFile();
 
         } catch (MalformedURLException e) {
             e.getMessage();

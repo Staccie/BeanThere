@@ -19,6 +19,7 @@ import com.beanthere.dialoghelper.PromoInputDialog;
 import com.beanthere.listeners.BeanAdapterInterface;
 import com.beanthere.objects.GeneralResponse;
 import com.beanthere.objects.Voucher;
+import com.beanthere.utils.Logger;
 import com.beanthere.webservice.HttpHandler;
 import com.google.gson.Gson;
 
@@ -171,9 +172,11 @@ public class VoucherListActivity extends BaseActivity implements BeanAdapterInte
     @Override
     public void onButtonClick(String tag, String id, int position) {
 
+        Logger.e("VoucherListActivity.onButtonClick", "tag=" + tag + "; id=" + id + "postition: " + position);
+
         if (tag.equals("voucherDetail")) {
             startPromoActivity(tag);
-        } else if (tag.equals("redeemPromo")) {
+        } else if (tag.equals("redeempromo")) {
             FragmentManager fm = getFragmentManager();
             PromoInputDialog inputDialog = new PromoInputDialog().newInstance(id);
             inputDialog.show(fm, tag);
@@ -183,7 +186,7 @@ public class VoucherListActivity extends BaseActivity implements BeanAdapterInte
 
     @Override
     public void onInputDialogDismiss(String tag, String data) {
-        if (tag.equals("redeemPromo")) {
+        if (tag.equals("redeempromo")) {
             String[] params = data.split(",");
             new RedeemPromoTask().execute(params[0], params[1], SharedPreferencesManager.getAPIKey(this));
         }

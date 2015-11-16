@@ -97,6 +97,7 @@
     <string name="password_not_match">Password not match.</string>
     <string name="unknown_response">Unknown server response</string>
     <string name="action_favorite">Favourite</string>
+    <string name="email_hint">abc@email.com</string>
 
 
 </resources>

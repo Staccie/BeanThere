@@ -7,6 +7,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:textColorPrimary">#999999</item>
         <item name="colorPrimary">#FFFFFF</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
     </style>
 
     <style name="Hyperlink" parent="android:Widget.TextView">
@@ -83,6 +84,9 @@
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">#999999</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
     </style>
 
 </resources>

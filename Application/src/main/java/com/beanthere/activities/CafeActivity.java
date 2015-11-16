@@ -1,12 +1,13 @@
 package com.beanthere.activities;
 
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -16,6 +17,7 @@ import com.beanthere.R;
 import com.beanthere.adapter.CafeMenuAdapter;
 import com.beanthere.data.SharedPreferencesManager;
 import com.beanthere.listeners.BeanLocationListener;
+import com.beanthere.objects.AppObject;
 import com.beanthere.objects.Cafe;
 import com.beanthere.objects.CafeMenu;
 import com.beanthere.objects.Category;
@@ -60,6 +62,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 
     private LinearLayout llCafeDetails;
     private ProgressBar mProgressBar;
+    private ImageView ibFavourite;
 
     private UpdateFavouriteTask mUpdateFavouriteTask;
 
@@ -70,7 +73,14 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         Log.e("onCreate", "CafeActivity");
         setContentView(R.layout.activity_cafe);
 
-        findViewById(R.id.imageButtonFavourite).setVisibility(View.VISIBLE);
+        ibFavourite = (ImageView) findViewById(R.id.imageButtonFavourite);
+        ibFavourite.setVisibility(View.VISIBLE);
+        ibFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickUpdateFavourite();
+            }
+        });
 
         llCafeDetails = (LinearLayout) findViewById(R.id.llCafeDetails);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarCafeDetails);
@@ -197,7 +207,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                 String response;
                 HttpHandler req = new HttpHandler();
 
-                isFavourite = mCafe.isFeatured.equals("1");
+//                isFavourite = mCafe.isFavourite.equals("1");
 
                 if (isFavourite) {
                     response = req.deleteFavourite(SharedPreferencesManager.getAPIKey(CafeActivity.this), mCafeId);
@@ -218,7 +228,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                         return false;
                     } else {
                         isFavourite = !isFavourite;
-                        mCafe.isFeatured = isFavourite ? "1" : "0";
+                        mCafe.isFavourite = isFavourite ? "1" : "0";
                     }
                 }
 
@@ -239,16 +249,21 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
             isLoading = false;
 
             if (!isCancelled() && !isFinishing()) {
-
-                if (success) {
-//                    ((ImageButton) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ib_fav_true : R.drawable.ib_fav_false);
-                    ((ImageView) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ic_is_favourite : R.drawable.ic_menu_favourite);
-                }
-
+                updateFavouriteButton(success);
                 mProgressBar.setVisibility(View.GONE);
             }
 
         }
+    }
+
+    private void updateFavouriteButton(boolean success) {
+        if (success) {
+           ibFavourite.setImageResource(isFavourite ? R.drawable.ic_is_favourite : R.drawable.ic_menu_favourite);
+
+//                    ((ImageButton) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ib_fav_true : R.drawable.ib_fav_false);
+//                    ((ImageView) findViewById(R.id.imageButtonFavourite)).setImageResource(isFavourite ? R.drawable.ic_is_favourite : R.drawable.ic_menu_favourite);
+        }
+
     }
 
     private boolean loadCafeDetails(String response) {
@@ -288,6 +303,10 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                             if (mCafe.logo == null || mCafe.logo.trim().isEmpty()) {
 //                                ivCafe.setImageResource(R.drawable.placeholder);
                             } else {
+//                                float scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 2) : 250;
+//                                float scaledHeight = Math.round(scaledWidth / width * height);
+//
+//                                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 65, getResources().getDisplayMetrics());
                                 new ImageViewDownloader(ivLogo, true).execute(mCafe.logo);
                             }
 
@@ -328,6 +347,9 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
                             if (mCafe.hasWifi.equals("1")) {
                                 ivWifi.setVisibility(View.VISIBLE);
                             }
+
+                            isFavourite = mCafe.isFavourite == null ? false : (mCafe.isFavourite.equals("1") ? true : false);
+                            ibFavourite.setImageResource(isFavourite ? R.drawable.ic_is_favourite : R.drawable.ic_menu_favourite);
 
                             if (mCafe.address_1 == null || mCafe.address_1.isEmpty()) {
                                 tvAdd1.setVisibility(View.GONE);
@@ -440,7 +462,12 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
         switchView(1);
     }
 
-    public void onClickUpdateFavourite(View view) {
+//    public void onClickUpdateFavourite(View view) {
+//        mUpdateFavouriteTask = new UpdateFavouriteTask();
+//        mUpdateFavouriteTask.execute();
+//    }
+
+    private void onClickUpdateFavourite() {
         mUpdateFavouriteTask = new UpdateFavouriteTask();
         mUpdateFavouriteTask.execute();
     }

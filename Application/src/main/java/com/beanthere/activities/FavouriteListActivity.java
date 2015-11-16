@@ -150,7 +150,7 @@ public class FavouriteListActivity extends BaseActivity implements BeanDialogInt
                         DialogHelper.showErrorDialog(FavouriteListActivity.this, genResponse.error_message);
 //                        showNoticeDialog("", "", genResponse.error_message, "");
                     } else {
-                        updateCafeList(genResponse.cafeList);
+                        updateCafeList(genResponse.favList);
                     }
                 }
             }

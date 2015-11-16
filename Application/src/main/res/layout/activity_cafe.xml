@@ -89,7 +89,6 @@
                     android:layout_height="wrap_content"
                     android:background="#00FFFFFF"
                     android:id="@+id/imageViewCafeLogo"
-                    android:scaleType="centerInside"
                     android:layout_gravity="center"/>
 
             </FrameLayout>

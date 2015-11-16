@@ -24,4 +24,7 @@ public class GeneralResponse {
     @SerializedName("cards")
     public List<Card> cardList;
 
+    @SerializedName("favourites")
+    public List<Cafe> favList;
+
 }
