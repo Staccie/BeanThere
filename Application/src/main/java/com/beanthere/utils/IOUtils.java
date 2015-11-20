@@ -38,9 +38,26 @@ public class IOUtils {
 			//			Debugger.v("written file", path + name);
 
 		} catch (FileNotFoundException e) {
-			Log.e("writeFile@" + tag, e.getMessage());
+			Logger.e("writeFile@" + tag, e.getMessage());
 		} catch (IOException e) {
-			Log.e("writeFile@" + tag, e.getMessage());
+			Logger.e("writeFile@" + tag, e.getMessage());
+		}
+
+	}
+
+	public static void writeBMP(Context context, Bitmap bm, String fileName) {
+		try {
+			String path = context.getExternalFilesDir(null) + "/";
+			FileOutputStream fos = new FileOutputStream(path + fileName);
+			bm.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.close();
+
+			//			Debugger.v("written file", path + name);
+
+		} catch (FileNotFoundException e) {
+			Logger.e("writeFile@", e.getMessage());
+		} catch (IOException e) {
+			Logger.e("writeFile@", e.getMessage());
 		}
 
 	}
@@ -146,8 +163,11 @@ public class IOUtils {
 
 			os.close();
 			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			Logger.e("copyInputStreamToFile", e.getMessage());
+		} catch (IOException e) {
+			Logger.e("copyInputStreamToFile", e.getMessage());
 		}
 	}
+
 }

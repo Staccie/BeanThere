@@ -69,7 +69,7 @@ public class HttpHandler {
     }
 
     public String getFavouriteList(String apikey) {
-        return httpGet("/favourites", apikey);
+        return httpGet("favourites", apikey);
     }
 
     public String getMerchantDetails(String id, String apikey) {

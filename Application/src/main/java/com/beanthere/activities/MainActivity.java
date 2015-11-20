@@ -160,6 +160,12 @@ public class MainActivity extends Activity implements BeanDialogInterface.OnInpu
     private void autoOfflineLogin() {
 
         if (SharedPreferencesManager.getInt(this, "logintype") != -1 && !SharedPreferencesManager.getAPIKey(this).isEmpty()) {
+
+            SharedPreferences sp = this.getSharedPreferences(this.getPackageName(), Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("checkLocation", true);
+            editor.commit();
+
             Intent intent = new Intent(this, CafeListActivity.class);
             startActivity(intent);
             finish();

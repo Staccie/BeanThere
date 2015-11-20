@@ -20,9 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -52,6 +56,8 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
     private ListView mListView;
     private ProgressBar mProgressBar;
     private SwipeRefreshLayout mRefreshLayout;
+
+    public static boolean isFirstLocation = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +197,9 @@ public class CafeListActivity extends NavDrawerActivity implements BeanDialogInt
 
     @Override
     public void onPositiveClick(String tag, int which) {
-
+        if (tag.equals("getGeoLocation")) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
     }
 }

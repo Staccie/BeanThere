@@ -321,7 +321,7 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
     @Override
     protected void onResume() {
         super.onResume();
-        startShortLocationListener();
+        startLongLocationListener();
     }
 
     @Override
@@ -340,9 +340,13 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
 
             if (!isEnabled) {
                 promptEnableGPS();
+            } else {
+                startLongLocationListener();
             }
 
             SharedPreferencesManager.putBoolean(this, "checkLocation", false);
+        } else {
+            startLongLocationListener();
         }
 
         return false;
@@ -386,7 +390,7 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
     }
 
     protected void startShortLocationListener() {
-        startLocationListener(3000);
+        startLocationListener(1000);
     }
 
     private void startLocationListener(long interval) {
@@ -409,7 +413,7 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
                 return;
             }
         }
-        mCoreLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 1, this);
+        mCoreLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 100, this);
     }
 
     protected void removeLocationListener() {
@@ -481,6 +485,8 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
     @Override
     public void onLocationChanged(Location location) {
         mCoreLocation = location;
+        mLatitude = mCoreLocation.getLatitude();
+        mLongitude = mCoreLocation.getLongitude();
     }
 
     @Override
@@ -504,9 +510,9 @@ public class NavDrawerActivity extends AppCompatActivity implements NavDrawerAda
 
         // remove update else will consume battery
 //        mLocationManager.removeUpdates(mLocationListener);
-
         mLatitude = location.getLatitude();
         mLongitude = location.getLongitude();
+//        CafeListActivity.isFirstLocation = false;
 
     }
 

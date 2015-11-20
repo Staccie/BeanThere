@@ -307,7 +307,7 @@ public class CafeActivity extends BaseActivity implements OnMapReadyCallback {
 //                                float scaledHeight = Math.round(scaledWidth / width * height);
 //
 //                                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 65, getResources().getDisplayMetrics());
-                                new ImageViewDownloader(ivLogo, true).execute(mCafe.logo);
+                                new ImageViewDownloader(ivLogo, true, CafeActivity.this).execute(mCafe.logo);
                             }
 
 

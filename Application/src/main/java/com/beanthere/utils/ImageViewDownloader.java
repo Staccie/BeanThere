@@ -1,5 +1,6 @@
 package com.beanthere.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -17,8 +18,16 @@ import java.net.URL;
  */
 public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
 
-    ImageView imageView;
-    boolean isLogo;
+    private ImageView imageView;
+    private boolean isLogo;
+    private Context mContext;
+
+    // TEMP
+    public ImageViewDownloader(ImageView iv, boolean isLogo, Context context) {
+        this.imageView = iv;
+        this.isLogo = isLogo;
+        this.mContext = context;
+    }
 
     public ImageViewDownloader(ImageView iv, boolean isLogo) {
         this.imageView = iv;
@@ -54,12 +63,19 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
                 }
             }
 
+            int scaledWidth;
+            int scaledHeight;
+
+            if (isLogo) {
+                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 5) : 250;
+            } else {
+                scaledWidth = (AppObject.screenWidth > 0) ? AppObject.screenWidth : 800;
+            }
+
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeByteArray(byteArr, 0, count, options);
-
-//            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-            options.inSampleSize = 4;
+            options.inSampleSize = IOUtils.calculateInSampleSize(options, scaledWidth, scaledWidth);
             options.inPurgeable = true;
             options.inInputShareable = true;
             options.inJustDecodeBounds = false;
@@ -71,27 +87,16 @@ public class ImageViewDownloader extends AsyncTask<String, Void, Bitmap> {
 
             bm = BitmapFactory.decodeByteArray(byteArr, 0, count, options);
 
-
             float width = bm.getWidth();
             float height = bm.getHeight();
-            int scaledWidth;
-            int scaledHeight;
 
-            if (isLogo) {
-                scaledWidth = (AppObject.screenWidth > 0) ? Math.round((float)AppObject.screenWidth / 2) : 200;
-//                scaledWidth = bm.getWidth();
-            } else {
-                scaledWidth = (AppObject.screenWidth > 0) ? AppObject.screenWidth : 800;
-            }
-
-            Logger.e("scaledWidth", scaledWidth + " dp");
+//            Logger.e("scaledWidth", width + ", " + scaledWidth + ", " + options.inSampleSize + (width > scaledWidth));
 
             if (width > scaledWidth) {
                 scaledHeight = Math.round(scaledWidth / width * height);
+//                Logger.e("scaledHeight", scaledHeight + "  ");
                 bm = Bitmap.createScaledBitmap(bm, scaledWidth, scaledHeight, false);
             }
-
-//            IOUtils.copyInputStreamToFile();
 
         } catch (MalformedURLException e) {
             e.getMessage();
